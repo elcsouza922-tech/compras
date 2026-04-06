@@ -40,11 +40,18 @@
     .nome { flex: 1; }
     .preco, .qtd { width: 60px; }
 
-    .undo {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: #333; color: white; padding: 10px 15px;
-      border-radius: 8px; display: none;
-    }
+  .undo {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  display: none;
+  z-index: 9999; /* 👈 isso resolve */
+}
 
     .undo button {
       background: transparent; color: #4CAF50; border: none; margin-left: 10px;
