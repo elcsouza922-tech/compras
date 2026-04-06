@@ -13,46 +13,31 @@
       border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    input, button { padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ccc; }
-    button { background: #4CAF50; color: white; border: none; cursor: pointer; width: 100%; }
-
-    ul { list-style: none; padding: 0; }
-
-    .secao-titulo {
-      margin-top: 15px;
-      font-weight: bold;
-      color: #555;
-    }
-
-    .item-wrapper {
-      position: relative;
-      overflow: hidden;
+    input, select, button {
+      padding: 10px;
+      margin: 5px 0;
       border-radius: 8px;
-      margin: 10px 0;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
     }
+
+    button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+
+    .secao-titulo { margin-top: 15px; font-weight: bold; color: #555; }
+
+    .item-wrapper { position: relative; overflow: hidden; border-radius: 8px; margin: 10px 0; }
 
     .fundo-delete {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 100%;
-      background: #ff4d4d;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 20px;
-      color: white;
-      font-weight: bold;
+      position: absolute; right: 0; top: 0; bottom: 0; width: 100%;
+      background: #ff4d4d; display: flex; align-items: center;
+      justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold;
     }
 
     li {
       display: flex; align-items: center; gap: 8px;
-      background: #fafafa; padding: 10px;
-      flex-wrap: wrap;
-      transition: transform 0.2s ease;
-      position: relative;
-      z-index: 2;
+      background: #fafafa; padding: 10px; flex-wrap: wrap;
+      transition: transform 0.2s ease; position: relative; z-index: 2;
       touch-action: pan-y;
     }
 
@@ -86,6 +71,7 @@
 
 <script>
 let lista = JSON.parse(localStorage.getItem('listaCompras')) || [];
+let aprendizado = JSON.parse(localStorage.getItem('aprendizadoCategorias')) || {};
 
 function salvar() {
   localStorage.setItem('listaCompras', JSON.stringify(lista));
@@ -96,11 +82,33 @@ function parseValor(v) {
   return parseFloat(v.toString().replace(',', '.')) || 0;
 }
 
+function sugerirCategoria(nome) {
+  const n = nome.toLowerCase();
+  if (aprendizado[n]) return aprendizado[n];
+
+  if (/(banana|maçã|maca|laranja|tomate|alface)/.test(n)) return 'Hortifruti';
+  if (/(carne|frango|bife)/.test(n)) return 'Açougue';
+  if (/(pão|pao|bolo)/.test(n)) return 'Padaria';
+  if (/(refrigerante|suco|água|agua)/.test(n)) return 'Bebidas';
+  if (/(detergente|sabão|sabao)/.test(n)) return 'Limpeza';
+  if (/(shampoo|sabonete|papel)/.test(n)) return 'Higiene';
+
+  return 'Outros';
+}
+
+// sugestão automática
+const inputItem = document.getElementById('item');
+const selectCategoria = document.getElementById('categoria');
+
+inputItem.addEventListener('input', () => {
+  const sugestao = sugerirCategoria(inputItem.value);
+  selectCategoria.value = sugestao;
+});
+
 function renderizar() {
   const container = document.getElementById('lista');
   container.innerHTML = '';
 
-  // agrupar por categoria
   const categorias = {};
 
   lista.forEach(item => {
@@ -109,7 +117,6 @@ function renderizar() {
     categorias[cat].push(item);
   });
 
-  // ordenar categorias
   const nomesCategorias = Object.keys(categorias).sort((a,b)=>a.localeCompare(b));
 
   let total = 0;
@@ -149,35 +156,6 @@ function renderizar() {
         </div>
       `;
 
-      let startX = 0;
-      let currentX = 0;
-      let movendo = false;
-
-      li.addEventListener('touchstart', e => {
-        startX = e.touches[0].clientX;
-        movendo = false;
-      });
-
-      li.addEventListener('touchmove', e => {
-        currentX = e.touches[0].clientX;
-        let diff = currentX - startX;
-
-        if (Math.abs(diff) > 10) movendo = true;
-
-        if (diff < 0) li.style.transform = `translateX(${diff}px)`;
-      });
-
-      li.addEventListener('touchend', () => {
-        let diff = currentX - startX;
-
-        if (movendo && diff < -120) {
-          if (navigator.vibrate) navigator.vibrate(100);
-          remover(index);
-        } else {
-          li.style.transform = 'translateX(0)';
-        }
-      });
-
       if (item.comprado && item.preco) {
         total += parseValor(item.preco) * (item.qtd || 1);
       }
@@ -191,55 +169,17 @@ function renderizar() {
   document.getElementById('total').innerText = total.toFixed(2);
 }
 
-// memória de aprendizado
-let aprendizado = JSON.parse(localStorage.getItem('aprendizadoCategorias')) || {};
-
-function sugerirCategoria(nome) {
-  const n = nome.toLowerCase();
-
-  // 1. verifica aprendizado
-  if (aprendizado[n]) return aprendizado[n];
-
-  // 2. regras padrão
-  if (/(banana|maçã|maca|laranja|tomate|alface|cebola|batata|cenoura|fruta|verdura)/.test(n)) return 'Hortifruti';
-  if (/(carne|frango|bife|linguiça|linguica|porco|peixe)/.test(n)) return 'Açougue';
-  if (/(pão|pao|bolo|biscoito|rosca)/.test(n)) return 'Padaria';
-  if (/(refrigerante|suco|água|agua|cerveja|leite)/.test(n)) return 'Bebidas';
-  if (/(detergente|sabão|sabao|amaciante|desinfetante|água sanitária)/.test(n)) return 'Limpeza';
-  if (/(shampoo|sabonete|creme dental|pasta de dente|papel higiênico|papel higienico)/.test(n)) return 'Higiene';
-
-  return 'Outros';
-}
-
-// sugerir categoria enquanto digita
-const inputItem = document.getElementById('item');
-const selectCategoria = document.getElementById('categoria');
-
-inputItem.addEventListener('input', () => {
-  const sugestao = sugerirCategoria(inputItem.value);
-  selectCategoria.value = sugestao;
-});
-
 function adicionarItem() {
-  const input = document.getElementById('item');
-  const select = document.getElementById('categoria');
-
-  const nome = input.value;
+  const nome = inputItem.value;
   if (!nome) return;
 
-  const categoria = select.value;
+  const categoria = selectCategoria.value;
 
-  // salvar aprendizado
   aprendizado[nome.toLowerCase()] = categoria;
   localStorage.setItem('aprendizadoCategorias', JSON.stringify(aprendizado));
 
   lista.push({ nome, categoria, comprado: false, preco: '', qtd: 1 });
-  input.value = '';
-
-  salvar();
-  renderizar();
-});
-  input.value = '';
+  inputItem.value = '';
 
   salvar();
   renderizar();
@@ -261,12 +201,6 @@ function setQtd(index, valor) {
   lista[index].qtd = parseInt(valor) || 1;
   salvar();
   atualizarTotal();
-}
-
-function remover(index) {
-  lista.splice(index, 1);
-  salvar();
-  renderizar();
 }
 
 function atualizarTotal() {
