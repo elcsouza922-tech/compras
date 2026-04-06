@@ -5,61 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Compras</title>
   <style>
-    body { font-family: Arial; padding: 15px; background: #f5f5f5; touch-action: pan-y; }
-    h2 { text-align: center; }
+    body { font-family: Arial; padding: 10px; background: #f5f5f5; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 10px; border-radius: 10px; }
 
-    .container {
-      max-width: 500px; margin: auto; background: white; padding: 15px;
-      border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    input, select, button {
-      padding: 10px; margin: 5px 0; border-radius: 8px;
-      border: 1px solid #ccc; width: 100%; box-sizing: border-box;
-    }
-
-    button { background: #4CAF50; color: white; border: none; cursor: pointer; }
-
-    .secao-titulo { margin-top: 15px; font-weight: bold; color: #555; }
-
-    .item-wrapper { position: relative; overflow: hidden; border-radius: 8px; margin: 10px 0; }
-
-    .fundo-delete {
-      position: absolute; right: 0; top: 0; bottom: 0; width: 100%;
-      background: #ff4d4d; display: flex; align-items: center;
-      justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold;
-    }
+    input, select, button { width: 100%; padding: 10px; margin: 5px 0; }
 
     li {
-      display: flex; align-items: center; gap: 8px;
-      background: #fafafa; padding: 10px;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-      position: relative; z-index: 2; touch-action: pan-y;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
     }
 
-    .nome { flex: 1; }
-    .preco, .qtd { width: 60px; }
+    .nome {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .qtd, .preco { width: 60px; }
 
     .undo {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: #333; color: white; padding: 10px 15px;
-      border-radius: 8px; display: none;
+      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+      background: black; color: white; padding: 10px; display: none;
     }
 
-    .undo button {
-      background: transparent; color: #4CAF50; border: none; margin-left: 10px;
-      cursor: pointer;
-    }
-
-    .total { font-size: 18px; text-align: center; margin-top: 15px; font-weight: bold; }
+    .secao { margin-top: 10px; font-weight: bold; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>🛒 Lista de Compras</h2>
+  <h3>Lista</h3>
 
-  <input type="text" id="item" placeholder="Digite um item">
+  <input id="item" placeholder="Item">
   <select id="categoria">
     <option>Hortifruti</option>
     <option>Açougue</option>
@@ -69,191 +50,114 @@
     <option>Higiene</option>
     <option>Outros</option>
   </select>
-  <button onclick="adicionarItem()">Adicionar</button>
+  <button onclick="add()">Adicionar</button>
+
+  <button onclick="finalizarCompra()">Finalizar compra</button>
+  <button onclick="repetirUltima()">Repetir última compra</button>
 
   <div id="lista"></div>
-
-  <div class="total">Total: R$ <span id="total">0.00</span></div>
 </div>
 
 <div id="undo" class="undo">
-  Item removido
-  <button onclick="desfazer()">Desfazer</button>
+  Removido <button onclick="undo()">Desfazer</button>
 </div>
 
 <script>
-let lista = JSON.parse(localStorage.getItem('listaCompras')) || [];
-let aprendizado = JSON.parse(localStorage.getItem('aprendizadoCategorias')) || {};
+let lista = JSON.parse(localStorage.getItem('lista')) || [];
+let historico = JSON.parse(localStorage.getItem('historico')) || [];
 let ultimoRemovido = null;
 
-function salvar() {
-  localStorage.setItem('listaCompras', JSON.stringify(lista));
+function salvar(){
+  localStorage.setItem('lista', JSON.stringify(lista));
 }
 
-function parseValor(v) {
-  if (!v) return 0;
-  return parseFloat(v.toString().replace(',', '.')) || 0;
-}
-
-function sugerirCategoria(nome) {
-  const n = nome.toLowerCase();
-  if (aprendizado[n]) return aprendizado[n];
-  if (/(banana|maçã|maca|laranja|tomate|alface)/.test(n)) return 'Hortifruti';
-  if (/(carne|frango|bife)/.test(n)) return 'Açougue';
-  if (/(pão|pao|bolo)/.test(n)) return 'Padaria';
-  if (/(refrigerante|suco|água|agua)/.test(n)) return 'Bebidas';
-  if (/(detergente|sabão|sabao)/.test(n)) return 'Limpeza';
-  if (/(shampoo|sabonete|papel)/.test(n)) return 'Higiene';
-  return 'Outros';
-}
-
-const inputItem = document.getElementById('item');
-const selectCategoria = document.getElementById('categoria');
-
-inputItem.addEventListener('input', () => {
-  selectCategoria.value = sugerirCategoria(inputItem.value);
-});
-
-function renderizar() {
-  const container = document.getElementById('lista');
-  container.innerHTML = '';
+function render(){
+  const div = document.getElementById('lista');
+  div.innerHTML = '';
 
   const categorias = {};
-  lista.forEach(item => {
-    const cat = item.categoria || 'Outros';
-    if (!categorias[cat]) categorias[cat] = [];
-    categorias[cat].push(item);
+  lista.forEach(i=>{
+    if(!categorias[i.categoria]) categorias[i.categoria]=[];
+    categorias[i.categoria].push(i);
   });
 
-  let total = 0;
+  Object.keys(categorias).sort().forEach(cat=>{
+    const t = document.createElement('div');
+    t.className='secao';
+    t.innerText=cat;
+    div.appendChild(t);
 
-  Object.keys(categorias).sort().forEach(cat => {
-    const titulo = document.createElement('div');
-    titulo.className = 'secao-titulo';
-    titulo.innerText = '📂 ' + cat;
-    container.appendChild(titulo);
-
-    categorias[cat].sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(item => {
-      const index = lista.indexOf(item);
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'item-wrapper';
-
-      const fundo = document.createElement('div');
-      fundo.className = 'fundo-delete';
-      fundo.innerText = 'Excluir';
-
+    categorias[cat].sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(item=>{
+      const i = lista.indexOf(item);
       const li = document.createElement('li');
 
       li.innerHTML = `
-        <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${index})">
+        <input type="checkbox" ${item.ok?'checked':''} onchange="toggle(${i})">
         <span class="nome">${item.nome}</span>
-        <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${index}, this.value)">
-        <input type="text" value="${item.preco || ''}" class="preco" oninput="setPreco(${index}, this.value)">
+        <input class="qtd" type="number" value="${item.qtd}" onchange="setQtd(${i},this.value)">
+        <input class="preco" type="text" value="${item.preco}" oninput="setPreco(${i},this.value)">
       `;
 
-      let startX = 0;
-      let currentX = 0;
-      let movendo = false;
+      // swipe
+      let sx=0, cx=0;
+      li.ontouchstart=e=>sx=e.touches[0].clientX;
+      li.ontouchmove=e=>{
+        cx=e.touches[0].clientX;
+        let d=cx-sx;
+        if(d<0) li.style.transform=`translateX(${d}px)`;
+      };
+      li.ontouchend=()=>{
+        if(cx-sx<-100) remove(i);
+        else li.style.transform='translateX(0)';
+      };
 
-      li.addEventListener('touchstart', e => {
-        startX = e.touches[0].clientX;
-        movendo = false;
-      });
-
-      li.addEventListener('touchmove', e => {
-        currentX = e.touches[0].clientX;
-        let diff = currentX - startX;
-        if (Math.abs(diff) > 10) movendo = true;
-        if (diff < 0) li.style.transform = `translateX(${diff}px)`;
-      });
-
-      li.addEventListener('touchend', () => {
-        let diff = currentX - startX;
-        if (movendo && diff < -120) {
-          if (navigator.vibrate) navigator.vibrate(100);
-          animarRemocao(li, index);
-        } else {
-          li.style.transform = 'translateX(0)';
-        }
-      });
-
-      if (item.comprado && item.preco) {
-        total += parseValor(item.preco) * (item.qtd || 1);
-      }
-
-      wrapper.appendChild(fundo);
-      wrapper.appendChild(li);
-      container.appendChild(wrapper);
+      div.appendChild(li);
     });
   });
-
-  document.getElementById('total').innerText = total.toFixed(2);
 }
 
-function animarRemocao(li, index) {
-  li.style.transform = 'translateX(-100%)';
-  li.style.opacity = '0';
-
-  setTimeout(() => {
-    remover(index);
-  }, 200);
+function add(){
+  const nome = item.value;
+  if(!nome) return;
+  lista.push({nome, categoria:categoria.value, qtd:1, preco:'', ok:false});
+  item.value='';
+  salvar(); render();
 }
 
-function remover(index) {
-  ultimoRemovido = { item: lista[index], index };
-  lista.splice(index, 1);
-  salvar();
-  renderizar();
+function toggle(i){ lista[i].ok=!lista[i].ok; salvar(); }
+function setQtd(i,v){ lista[i].qtd=v; salvar(); }
+function setPreco(i,v){ lista[i].preco=v; salvar(); }
 
-  const undo = document.getElementById('undo');
-  undo.style.display = 'block';
-
-  setTimeout(() => {
-    undo.style.display = 'none';
-  }, 5000);
+function remove(i){
+  ultimoRemovido = lista[i];
+  lista.splice(i,1);
+  salvar(); render();
+  undo.style.display='block';
+  setTimeout(()=>undo.style.display='none',4000);
 }
 
-function desfazer() {
-  if (!ultimoRemovido) return;
-  lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
-  salvar();
-  renderizar();
-  document.getElementById('undo').style.display = 'none';
+function undo(){
+  if(!ultimoRemovido) return;
+  lista.push(ultimoRemovido);
+  salvar(); render();
+  undo.style.display='none';
 }
 
-function adicionarItem() {
-  const nome = inputItem.value;
-  if (!nome) return;
-
-  const categoria = selectCategoria.value;
-  aprendizado[nome.toLowerCase()] = categoria;
-  localStorage.setItem('aprendizadoCategorias', JSON.stringify(aprendizado));
-
-  lista.push({ nome, categoria, comprado: false, preco: '', qtd: 1 });
-  inputItem.value = '';
-
-  salvar();
-  renderizar();
+// histórico
+function finalizarCompra(){
+  historico.push({data:new Date().toLocaleString(), itens:lista});
+  localStorage.setItem('historico', JSON.stringify(historico));
+  lista=[];
+  salvar(); render();
 }
 
-function toggle(index) {
-  lista[index].comprado = !lista[index].comprado;
-  salvar();
-  renderizar();
+function repetirUltima(){
+  if(historico.length===0) return;
+  lista = [...historico[historico.length-1].itens];
+  salvar(); render();
 }
 
-function setPreco(index, valor) {
-  lista[index].preco = valor;
-  salvar();
-}
-
-function setQtd(index, valor) {
-  lista[index].qtd = parseInt(valor) || 1;
-  salvar();
-}
-
-renderizar();
+render();
 </script>
 
 </body>
