@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Compras</title>
   <style>
-    body {
-  font-family: Arial;
-  padding: 15px;
-  background: #f5f5f5;
-  touch-action: pan-y;
-}
+    body { font-family: Arial; padding: 15px; background: #f5f5f5; touch-action: pan-y; }
     h2 { text-align: center; }
 
     .container {
@@ -22,6 +17,12 @@
     button { background: #4CAF50; color: white; border: none; cursor: pointer; width: 100%; }
 
     ul { list-style: none; padding: 0; }
+
+    .secao-titulo {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #555;
+    }
 
     .item-wrapper {
       position: relative;
@@ -52,7 +53,7 @@
       transition: transform 0.2s ease;
       position: relative;
       z-index: 2;
-        touch-action: pan-y;
+      touch-action: pan-y;
     }
 
     .campo { display: flex; flex-direction: column; font-size: 12px; }
@@ -67,9 +68,18 @@
   <h2>🛒 Lista de Compras</h2>
 
   <input type="text" id="item" placeholder="Digite um item">
+  <select id="categoria">
+    <option>Hortifruti</option>
+    <option>Açougue</option>
+    <option>Padaria</option>
+    <option>Bebidas</option>
+    <option>Limpeza</option>
+    <option>Higiene</option>
+    <option>Outros</option>
+  </select>
   <button onclick="adicionarItem()">Adicionar</button>
 
-  <ul id="lista"></ul>
+  <div id="lista"></div>
 
   <div class="total">Total: R$ <span id="total">0.00</span></div>
 </div>
@@ -87,87 +97,148 @@ function parseValor(v) {
 }
 
 function renderizar() {
-  const ul = document.getElementById('lista');
-  ul.innerHTML = '';
+  const container = document.getElementById('lista');
+  container.innerHTML = '';
+
+  // agrupar por categoria
+  const categorias = {};
+
+  lista.forEach(item => {
+    const cat = item.categoria || 'Outros';
+    if (!categorias[cat]) categorias[cat] = [];
+    categorias[cat].push(item);
+  });
+
+  // ordenar categorias
+  const nomesCategorias = Object.keys(categorias).sort((a,b)=>a.localeCompare(b));
 
   let total = 0;
 
-  lista.forEach((item, index) => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'item-wrapper';
+  nomesCategorias.forEach(cat => {
+    const tituloEl = document.createElement('div');
+    tituloEl.className = 'secao-titulo';
+    tituloEl.innerText = '📂 ' + cat;
+    container.appendChild(tituloEl);
 
-    const fundo = document.createElement('div');
-    fundo.className = 'fundo-delete';
-    fundo.innerText = 'Excluir';
+    const itens = categorias[cat].sort((a,b)=>a.nome.localeCompare(b.nome));
 
-    const li = document.createElement('li');
+    itens.forEach(item => {
+      const index = lista.indexOf(item);
 
-    li.innerHTML = `
-      <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${index})">
-      <span style="flex:1">${item.nome}</span>
+      const wrapper = document.createElement('div');
+      wrapper.className = 'item-wrapper';
 
-      <div class="campo">
-        <label>Qtd</label>
-        <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${index}, this.value)">
-      </div>
+      const fundo = document.createElement('div');
+      fundo.className = 'fundo-delete';
+      fundo.innerText = 'Excluir';
 
-      <div class="campo">
-        <label>R$</label>
-        <input type="text" inputmode="decimal" value="${item.preco || ''}" class="preco" oninput="setPreco(${index}, this.value)">
-      </div>
-    `;
+      const li = document.createElement('li');
 
-    let startX = 0;
-let currentX = 0;
-let movendo = false;
+      li.innerHTML = `
+        <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${index})">
+        <span style="flex:1">${item.nome}</span>
 
-li.addEventListener('touchstart', e => {
-  startX = e.touches[0].clientX;
-  movendo = false;
-});
+        <div class="campo">
+          <label>Qtd</label>
+          <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${index}, this.value)">
+        </div>
 
-li.addEventListener('touchmove', e => {
-  currentX = e.touches[0].clientX;
-  let diff = currentX - startX;
+        <div class="campo">
+          <label>R$</label>
+          <input type="text" inputmode="decimal" value="${item.preco || ''}" class="preco" oninput="setPreco(${index}, this.value)">
+        </div>
+      `;
 
-  if (Math.abs(diff) > 10) {
-    movendo = true; // só considera gesto real
-  }
+      let startX = 0;
+      let currentX = 0;
+      let movendo = false;
 
-  if (diff < 0) {
-    li.style.transform = `translateX(${diff}px)`;
-  }
-});
+      li.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        movendo = false;
+      });
 
-li.addEventListener('touchend', () => {
-  let diff = currentX - startX;
+      li.addEventListener('touchmove', e => {
+        currentX = e.touches[0].clientX;
+        let diff = currentX - startX;
 
-  if (movendo && diff < -120) {
-    if (navigator.vibrate) navigator.vibrate(100);
-    remover(index);
-  } else {
-    li.style.transform = 'translateX(0)';
-  }
-});
+        if (Math.abs(diff) > 10) movendo = true;
 
-    if (item.comprado && item.preco) {
-      total += parseValor(item.preco) * (item.qtd || 1);
-    }
+        if (diff < 0) li.style.transform = `translateX(${diff}px)`;
+      });
 
-    wrapper.appendChild(fundo);
-    wrapper.appendChild(li);
-    ul.appendChild(wrapper);
+      li.addEventListener('touchend', () => {
+        let diff = currentX - startX;
+
+        if (movendo && diff < -120) {
+          if (navigator.vibrate) navigator.vibrate(100);
+          remover(index);
+        } else {
+          li.style.transform = 'translateX(0)';
+        }
+      });
+
+      if (item.comprado && item.preco) {
+        total += parseValor(item.preco) * (item.qtd || 1);
+      }
+
+      wrapper.appendChild(fundo);
+      wrapper.appendChild(li);
+      container.appendChild(wrapper);
+    });
   });
 
   document.getElementById('total').innerText = total.toFixed(2);
 }
 
+// memória de aprendizado
+let aprendizado = JSON.parse(localStorage.getItem('aprendizadoCategorias')) || {};
+
+function sugerirCategoria(nome) {
+  const n = nome.toLowerCase();
+
+  // 1. verifica aprendizado
+  if (aprendizado[n]) return aprendizado[n];
+
+  // 2. regras padrão
+  if (/(banana|maçã|maca|laranja|tomate|alface|cebola|batata|cenoura|fruta|verdura)/.test(n)) return 'Hortifruti';
+  if (/(carne|frango|bife|linguiça|linguica|porco|peixe)/.test(n)) return 'Açougue';
+  if (/(pão|pao|bolo|biscoito|rosca)/.test(n)) return 'Padaria';
+  if (/(refrigerante|suco|água|agua|cerveja|leite)/.test(n)) return 'Bebidas';
+  if (/(detergente|sabão|sabao|amaciante|desinfetante|água sanitária)/.test(n)) return 'Limpeza';
+  if (/(shampoo|sabonete|creme dental|pasta de dente|papel higiênico|papel higienico)/.test(n)) return 'Higiene';
+
+  return 'Outros';
+}
+
+// sugerir categoria enquanto digita
+const inputItem = document.getElementById('item');
+const selectCategoria = document.getElementById('categoria');
+
+inputItem.addEventListener('input', () => {
+  const sugestao = sugerirCategoria(inputItem.value);
+  selectCategoria.value = sugestao;
+});
+
 function adicionarItem() {
   const input = document.getElementById('item');
+  const select = document.getElementById('categoria');
+
   const nome = input.value;
   if (!nome) return;
 
-  lista.push({ nome, comprado: false, preco: '', qtd: 1 });
+  const categoria = select.value;
+
+  // salvar aprendizado
+  aprendizado[nome.toLowerCase()] = categoria;
+  localStorage.setItem('aprendizadoCategorias', JSON.stringify(aprendizado));
+
+  lista.push({ nome, categoria, comprado: false, preco: '', qtd: 1 });
+  input.value = '';
+
+  salvar();
+  renderizar();
+});
   input.value = '';
 
   salvar();
