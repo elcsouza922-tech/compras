@@ -112,31 +112,37 @@ function renderizar() {
     `;
 
     let startX = 0;
-    let currentX = 0;
+let currentX = 0;
+let movendo = false;
 
-    li.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-    });
+li.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+  movendo = false;
+});
 
-    li.addEventListener('touchmove', e => {
-      currentX = e.touches[0].clientX;
-      let diff = currentX - startX;
+li.addEventListener('touchmove', e => {
+  currentX = e.touches[0].clientX;
+  let diff = currentX - startX;
 
-      if (diff < 0) {
-        li.style.transform = `translateX(${diff}px)`;
-      }
-    });
+  if (Math.abs(diff) > 10) {
+    movendo = true; // só considera gesto real
+  }
 
-    li.addEventListener('touchend', () => {
-      let diff = currentX - startX;
+  if (diff < 0) {
+    li.style.transform = `translateX(${diff}px)`;
+  }
+});
 
-      if (diff < -120) {
-        if (navigator.vibrate) navigator.vibrate(100);
-        remover(index);
-      } else {
-        li.style.transform = 'translateX(0)';
-      }
-    });
+li.addEventListener('touchend', () => {
+  let diff = currentX - startX;
+
+  if (movendo && diff < -120) {
+    if (navigator.vibrate) navigator.vibrate(100);
+    remover(index);
+  } else {
+    li.style.transform = 'translateX(0)';
+  }
+});
 
     if (item.comprado && item.preco) {
       total += parseValor(item.preco) * (item.qtd || 1);
