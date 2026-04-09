@@ -127,7 +127,15 @@
   </style>
 </head>
 <body>
-
+<div id="login-screen" class="home" style="background: var(--bg); position: fixed; z-index: 5000; width: 100%; height: 100%; top: 0; left: 0;">
+    <div class="container" style="max-width: 350px;">
+        <h2>🔐 Acesso Privado</h2>
+        <input type="email" id="login-email" placeholder="E-mail">
+        <input type="password" id="login-pass" placeholder="Senha">
+        <button class="btn-add" onclick="fazerLogin()">Entrar</button>
+        <p id="login-erro" style="color: var(--danger); font-size: 12px; margin-top: 10px;"></p>
+    </div>
+</div>
 <div class="container">
   <h2>🛒 Lista de Compras</h2>
 
@@ -153,34 +161,57 @@
 </div>
 
 <script type="module">
-// 1. IMPORTAÇÃO FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+// Adicione o import de AUTH
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-// 2. CONFIGURAÇÃO (SUAS CHAVES)
 const firebaseConfig = {
   apiKey: "AIzaSyBK3e1x0ZgjZEjHgrJy33jpDl30y2QUww0",
   databaseURL: "https://listacompras-70e30-default-rtdb.firebaseio.com",
   projectId: "listacompras-70e30",
 };
 
-// 3. INICIALIZAÇÃO
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const listaRef = ref(db, 'minha_lista_compartilhada');
+const auth = getAuth(app); // Inicializa o Auth
 
 let lista = [];
-let ultimoRemovido = null;
+let listaRef;
 
-// 4. SINCRONIZAÇÃO EM TEMPO REAL
-onValue(listaRef, (snapshot) => {
-  const data = snapshot.val();
-  lista = data || [];
-  renderizar(); 
+// FUNÇÃO DE LOGIN
+window.fazerLogin = () => {
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+    const erro = document.getElementById('login-erro');
+
+    signInWithEmailAndPassword(auth, email, pass)
+        .catch(e => erro.innerText = "Acesso negado: Verifique seus dados.");
+};
+
+// MONITOR DE ESTADO (O coração do login)
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Usuário logado: Esconde a tela de login e carrega os dados
+        document.getElementById('login-screen').classList.add('hidden');
+        
+        // DICA: Você pode criar uma lista única por usuário usando o ID dele (user.uid)
+        listaRef = ref(db, 'usuarios/' + user.uid + '/lista');
+
+        onValue(listaRef, (snapshot) => {
+            lista = snapshot.val() || [];
+            renderizar();
+        });
+    } else {
+        // Usuário deslogado: Mostra a tela de login
+        document.getElementById('login-screen').classList.remove('hidden');
+    }
 });
 
 function salvar() {
-  set(listaRef, lista);
+    if (auth.currentUser) {
+        set(listaRef, lista);
+    }
 }
 
 function parseValor(v) {
