@@ -5,104 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Compras Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #10b981;
-      --bg: #f1f5f9;
-      --card: rgba(255, 255, 255, 0.9);
-      --text: #1e293b;
-      --text-light: #64748b;
-      --danger: #ef4444;
-    }
+ <style>
+  :root {
+    --primary: #10b981;
+    --bg: #f1f5f9;
+    --card: rgba(255, 255, 255, 0.95);
+    --text: #1e293b;
+    --text-light: #64748b;
+    --danger: #ef4444;
+  }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0; padding: 20px;
-      color: var(--text);
-      touch-action: pan-y;
-      padding-bottom: 140px;
-      min-height: 100vh;
-    }
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0; padding: 20px;
+    color: var(--text);
+    touch-action: pan-y;
+    padding-bottom: 140px;
+  }
 
-    body::before {
-      content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
-      z-index: -1;
-    }
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+    z-index: -1;
+  }
 
-    .container { position: relative; z-index: 10; max-width: 500px; margin: auto; }
+  .container { position: relative; z-index: 10; max-width: 500px; margin: auto; }
 
-    /* LOGIN */
-    .login-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px);
-      z-index: 5000; display: flex; align-items: center; justify-content: center;
-    }
-    .login-box {
-      background: var(--card); padding: 40px 30px; border-radius: 28px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); width: 90%; max-width: 360px; text-align: center;
-    }
+  /* LOGIN */
+  .login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px);
+    z-index: 5000; display: flex; align-items: center; justify-content: center;
+  }
+  .login-box {
+    background: white; padding: 40px 30px; border-radius: 28px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); width: 90%; max-width: 360px; text-align: center;
+  }
 
-    /* HEADER */
-    .header-app { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .btn-sair { background: white; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; }
+  /* HEADER */
+  .header-app { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .btn-sair { background: white; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-light); cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-    /* INPUT SECTION */
-    .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 20px; }
-    input[type="text"], input[type="email"], input[type="password"] {
-      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;
-    }
-    .btn-add { background: var(--primary); color: white; width: 100%; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-    .btn-add:active { transform: scale(0.98); }
+  /* INPUT SECTION */
+  .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 25px; }
+  input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;
+  }
+  .btn-add { background: var(--primary); color: white; width: 100%; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 16px; }
 
-    /* LISTA */
-   /* LISTA - AJUSTADO PARA NÃO APARECER O FUNDO VERMELHO */
-    .item-wrapper { 
-      position: relative; 
-      overflow: hidden; 
-      border-radius: 16px; 
-      margin-bottom: 8px; 
-      background: var(--danger); /* O vermelho fica aqui, escondido */
-    }
-    
-    li {
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      padding: 14px; 
-      list-style: none;
-      background: white; /* Fundo sólido para cobrir o vermelho */
-      position: relative; 
-      z-index: 2; 
-      transition: transform 0.2s, background 0.3s;
-    }
+  /* LISTA */
+  .item-wrapper { position: relative; overflow: hidden; border-radius: 18px; margin-bottom: 10px; background: var(--danger); }
+  .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold; z-index: 1; }
+  
+  li {
+    display: flex; align-items: center; gap: 12px; padding: 14px; list-style: none;
+    background: white; position: relative; z-index: 2; transition: transform 0.2s, background 0.3s;
+  }
+  
+  /* Quando marcar como comprado: fundo cinza sólido para não vazar o vermelho */
+  li.comprado { background: #f1f5f9; } 
+  li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
 
-    /* ESTILO QUANDO COMPRADO - SEM TRANSPARÊNCIA NO FUNDO */
-    li.comprado { 
-      background: #f1f5f9; /* Um cinza bem claro em vez de ficar transparente */
-    }
+  input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; border-radius: 6px; }
+  
+  .nome { flex: 1; font-weight: 500; font-size: 16px; color: var(--text); }
+  
+  /* ESTILIZAÇÃO DOS INPUTS DE QTD E PREÇO DENTRO DA LISTA */
+  .qtd, .preco { 
+    border: 1px solid #e2e8f0; 
+    background: #f8fafc; 
+    padding: 8px; 
+    border-radius: 10px; 
+    font-weight: 700; 
+    font-family: inherit; 
+    color: var(--text);
+    outline: none;
+  }
+  .qtd { width: 45px; text-align: center; }
+  .preco { width: 85px; text-align: right; color: var(--primary-dark); }
+  .preco::placeholder { color: #cbd5e1; font-weight: 400; }
 
-    li.comprado .nome { 
-      text-decoration: line-through; 
-      color: var(--text-light); 
-    }
+  /* FOOTER */
+  .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+  .btn-limpar { background: none; border: none; color: var(--danger); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; opacity: 0.8; }
 
-    li.comprado input[type="checkbox"] {
-      opacity: 0.5; /* Só o checkbox fica mais clarinho */
-    }
-
-    li.comprado .qtd, li.comprado .preco {
-      opacity: 0.7; /* Os valores ficam mais discretos */
-    }
-    /* FOOTER & ACTIONS */
-    .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; }
-    .btn-limpar { background: none; border: none; color: var(--danger); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; text-decoration: underline; opacity: 0.7; }
-
-    #toast, .undo { position: fixed; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; display: none; }
-    #toast { top: 20px; }
-    .undo { bottom: 110px; align-items: center; gap: 10px; }
-    .hidden { display: none !important; }
-  </style>
+  #toast, .undo { position: fixed; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; display: none; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+  #toast { top: 20px; }
+  .undo { bottom: 110px; align-items: center; gap: 10px; }
+  .hidden { display: none !important; }
+</style>
 </head>
 <body>
 
