@@ -58,35 +58,34 @@
     .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold; z-index: 1; }
     
     li {
-      display: flex; align-items: center; gap: 12px; padding: 12px; list-style: none;
+      display: flex; align-items: center; gap: 10px; padding: 12px; list-style: none;
       background: white; position: relative; z-index: 2; transition: transform 0.2s, background 0.3s;
     }
     
     li.comprado { background: #f1f5f9; } 
     li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
 
-    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; }
+    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
     
     .nome { flex: 1; font-weight: 500; font-size: 15px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
-    /* INPUTS DE QTD E PREÇO */
-    .qtd { 
-      border: 1px solid #e2e8f0; background: #f8fafc; padding: 8px; border-radius: 10px; 
-      font-weight: 700; width: 40px; text-align: center; font-family: inherit;
+    /* BOXES IGUAIS */
+    .qtd-box, .preco-box {
+      display: flex; align-items: center; justify-content: center;
+      background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;
+      width: 80px; height: 40px; box-sizing: border-box; flex-shrink: 0;
     }
 
-    .preco-container {
-      display: flex; align-items: center; background: #f8fafc; border-radius: 10px; 
-      padding: 0 8px; border: 1px solid #e2e8f0; width: 90px; box-sizing: border-box;
+    .cifrao { font-size: 10px; font-weight: 800; color: var(--primary); margin-right: 2px; }
+
+    .input-lista {
+      border: none !important; background: transparent !important; 
+      width: 100% !important; font-weight: 700; font-family: inherit; 
+      color: var(--text); outline: none; text-align: center; font-size: 14px;
+      padding: 0 !important;
     }
     
-    .cifrao { font-size: 11px; font-weight: 800; color: var(--primary); margin-right: 2px; }
-
-    .preco { 
-      border: none !important; background: transparent !important; padding: 8px 0 !important; 
-      width: 100% !important; font-weight: 700; font-family: inherit; 
-      color: var(--primary-dark); outline: none; text-align: right; font-size: 14px;
-    }
+    .input-lista.preco-input { color: var(--primary-dark); text-align: left; }
 
     /* FOOTER */
     .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
@@ -157,7 +156,6 @@ let lista = [];
 let listaRef;
 let ultimoRemovido = null;
 
-// LOGIN & LOGOUT
 window.fazerLogin = () => {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
@@ -198,10 +196,25 @@ window.adicionarItem = () => {
 
 window.toggle = (idx) => { lista[idx].comprado = !lista[idx].comprado; salvar(); };
 
+// Lógica de Preço: 5 vira 5,00 | 550 vira 550,00
 window.setPreco = (idx, valor) => {
-    // Aceita apenas números e vírgula
-    const formatado = valor.replace(/[^\d,]/g, "");
-    lista[idx].preco = formatado;
+    if (!valor) return;
+
+    // Se o usuário digitou apenas números (sem vírgula), adicionamos ,00
+    if (!valor.includes(',')) {
+        let puro = valor.replace(/[^\d]/g, "");
+        if (puro.length > 0) {
+            valor = puro + ",00";
+        }
+    } else {
+        // Se ele digitou vírgula, garantimos que tenha duas casas decimais
+        let partes = valor.split(',');
+        let inteiros = partes[0].replace(/[^\d]/g, "");
+        let centavos = partes[1].replace(/[^\d]/g, "").padEnd(2, '0').slice(0, 2);
+        valor = (inteiros || "0") + "," + centavos;
+    }
+    
+    lista[idx].preco = valor;
     salvar();
     atualizarTotal();
 };
@@ -251,10 +264,14 @@ function renderizar() {
             <li class="${item.comprado ? 'comprado' : ''}">
                 <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${idx})">
                 <span class="nome">${item.nome}</span>
-                <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${idx}, this.value)">
-                <div class="preco-container">
+                
+                <div class="qtd-box">
+                    <input type="number" value="${item.qtd || 1}" class="input-lista" onchange="setQtd(${idx}, this.value)">
+                </div>
+
+                <div class="preco-box">
                     <span class="cifrao">R$</span>
-                    <input type="text" placeholder="0,00" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
+                    <input type="text" placeholder="0,00" value="${item.preco || ''}" class="input-lista preco-input" onblur="setPreco(${idx}, this.value)">
                 </div>
             </li>
         `;
