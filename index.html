@@ -8,212 +8,79 @@
   <style>
     :root {
       --primary: #10b981;
-      --primary-dark: #059669;
       --bg: #f1f5f9;
-      --card: rgba(255, 255, 255, 0.85);
+      --card: rgba(255, 255, 255, 0.9);
       --text: #1e293b;
       --text-light: #64748b;
       --danger: #ef4444;
-      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
     }
 
     body {
       font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 20px;
+      margin: 0; padding: 20px;
       color: var(--text);
       touch-action: pan-y;
       padding-bottom: 140px;
       min-height: 100vh;
     }
 
-    /* Fundo gradiente fixo atrás de tudo */
     body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
       z-index: -1;
     }
 
-    .container {
-      position: relative;
-      z-index: 10;
-      max-width: 500px;
-      margin: auto;
-    }
+    .container { position: relative; z-index: 10; max-width: 500px; margin: auto; }
 
-    /* TELA DE LOGIN (Glassmorphism) */
+    /* LOGIN */
     .login-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(10px);
-      z-index: 5000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px);
+      z-index: 5000; display: flex; align-items: center; justify-content: center;
     }
-
     .login-box {
-      background: var(--card);
-      padding: 40px 30px;
-      border-radius: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-      width: 90%;
-      max-width: 360px;
-      text-align: center;
-      animation: scaleIn 0.3s ease-out;
+      background: var(--card); padding: 40px 30px; border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); width: 90%; max-width: 360px; text-align: center;
     }
 
-    .login-box h2 { 
-      font-size: 28px; 
-      margin-bottom: 10px;
-      background: linear-gradient(to right, var(--primary), #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    /* HEADER */
+    .header-app { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-sair { background: white; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; }
 
-    .login-box input {
-      width: 100%;
-      padding: 16px;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      margin-bottom: 12px;
-      box-sizing: border-box;
-      font-size: 16px;
+    /* INPUT SECTION */
+    .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 20px; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;
     }
+    .btn-add { background: var(--primary); color: white; width: 100%; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-add:active { transform: scale(0.98); }
 
-    .btn-login {
-      background: var(--primary);
-      color: white;
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* APP CONTENT */
-    .header-app {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .btn-logout {
-      background: white;
-      border: none;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: var(--shadow);
-    }
-
-    .input-section {
-      background: white;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-    }
-
-    .btn-add {
-      background: var(--primary);
-      color: white;
-      width: 100%;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* LISTA DE ITENS */
-    .item-wrapper {
-      position: relative;
-      overflow: hidden;
-      border-radius: 16px;
-      margin-bottom: 8px;
-      background: white;
-    }
-
+    /* LISTA */
+    .item-wrapper { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 8px; background: #fff; }
+    .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; background: var(--danger); display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold; }
+    
     li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      list-style: none;
-      position: relative;
-      z-index: 2;
-      background: white;
-      transition: transform 0.2s;
+      display: flex; align-items: center; gap: 12px; padding: 14px; list-style: none;
+      background: white; position: relative; z-index: 2; transition: transform 0.2s;
     }
-
-    li.comprado { opacity: 0.6; }
+    li.comprado { background: #f8fafc; opacity: 0.6; }
     li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
 
-    .nome { flex: 1; font-weight: 500; }
-    .qtd, .preco {
-      border: none;
-      background: #f1f5f9;
-      padding: 8px;
-      border-radius: 8px;
-      font-weight: bold;
-      text-align: center;
-    }
-    .qtd { width: 45px; }
-    .preco { width: 75px; text-align: right; color: var(--primary-dark); }
+    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; }
+    .nome { flex: 1; font-weight: 500; font-size: 16px; }
+    
+    .qtd, .preco { border: none; background: #f1f5f9; padding: 8px; border-radius: 8px; font-weight: bold; font-family: inherit; }
+    .qtd { width: 45px; text-align: center; }
+    .preco { width: 80px; text-align: right; color: var(--primary); }
 
-    .fundo-delete {
-      position: absolute;
-      right: 0; top: 0; bottom: 0; width: 100%;
-      background: var(--danger);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 20px;
-      color: white;
-      font-weight: bold;
-    }
+    /* FOOTER & ACTIONS */
+    .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; }
+    .btn-limpar { background: none; border: none; color: var(--danger); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; text-decoration: underline; opacity: 0.7; }
 
-    /* TOTAL E AVISOS */
-    .total-card {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: white;
-      padding: 20px;
-      text-align: center;
-      border-top: 1px solid #e2e8f0;
-      z-index: 100;
-    }
-
-    #toast, .undo {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 12px 25px;
-      border-radius: 50px;
-      z-index: 9999;
-      display: none;
-      box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-    }
+    #toast, .undo { position: fixed; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; display: none; }
     #toast { top: 20px; }
     .undo { bottom: 110px; align-items: center; gap: 10px; }
-    .undo button { background: var(--primary); border: none; color: white; border-radius: 10px; padding: 5px 10px; cursor: pointer; }
-
     .hidden { display: none !important; }
-
-    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
@@ -222,12 +89,11 @@
 
 <div id="login-screen" class="login-overlay">
     <div class="login-box">
-        <div style="font-size: 50px; margin-bottom: 20px;">🔐</div>
+        <div style="font-size: 40px; margin-bottom: 10px;">🔐</div>
         <h2>Acesso Vip</h2>
-        <p>Sua lista de compras segura.</p>
         <input type="email" id="login-email" placeholder="E-mail">
         <input type="password" id="login-pass" placeholder="Senha">
-        <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+        <button class="btn-add" onclick="fazerLogin()">Entrar</button>
         <p id="login-erro" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
@@ -235,12 +101,13 @@
 <div id="app-content" class="container hidden">
   <div class="header-app">
       <h2 style="margin: 0;">🛒 Minha Lista</h2>
-      <button class="btn-logout" onclick="logout()">✕</button>
+      <button class="btn-sair" onclick="logout()">Sair</button>
   </div>
 
   <div class="input-section">
     <input type="text" id="item" placeholder="O que vamos comprar?">
     <button class="btn-add" onclick="adicionarItem()">Adicionar Item</button>
+    <center><button class="btn-limpar" onclick="limparLista()">Limpar Tudo</button></center>
   </div>
   
   <div id="lista"></div>
@@ -248,12 +115,12 @@
 
 <div class="total-card">
     <div style="font-size: 11px; color: var(--text-light); font-weight: bold;">TOTAL COMPRADO</div>
-    <div style="font-size: 24px; font-weight: 800; color: var(--primary-dark);">R$ <span id="total">0.00</span></div>
+    <div style="font-size: 26px; font-weight: 800; color: var(--primary);">R$ <span id="total">0.00</span></div>
 </div>
 
 <div id="undo" class="undo">
-  <span>Item removido</span>
-  <button onclick="desfazer()">Desfazer</button>
+  <span>Removido</span>
+  <button onclick="desfazer()" style="background:var(--primary); border:none; color:white; padding:4px 8px; border-radius:6px; cursor:pointer;">Desfazer</button>
 </div>
 
 <script type="module">
@@ -275,67 +142,54 @@ let lista = [];
 let listaRef;
 let ultimoRemovido = null;
 
-// LOGIN & LOGOUT
+// LOGIN
 window.fazerLogin = () => {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
     signInWithEmailAndPassword(auth, email, pass).catch(e => {
-        document.getElementById('login-erro').innerText = "Dados incorretos!";
+        document.getElementById('login-erro').innerText = "Credenciais inválidas";
     });
 };
 
-window.logout = () => {
-    if (confirm("Sair da conta?")) signOut(auth);
-};
+window.logout = () => { if(confirm("Sair do app?")) signOut(auth); };
 
-// ESTADO DO USUÁRIO
 onAuthStateChanged(auth, (user) => {
-    const loginScreen = document.getElementById('login-screen');
-    const appContent = document.getElementById('app-content');
-
     if (user) {
-        loginScreen.classList.add('hidden');
-        appContent.classList.remove('hidden');
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-content').classList.remove('hidden');
         listaRef = ref(db, 'usuarios/' + user.uid + '/lista');
         onValue(listaRef, (snapshot) => {
             lista = snapshot.val() || [];
             renderizar();
         });
     } else {
-        loginScreen.classList.remove('hidden');
-        appContent.classList.add('hidden');
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('app-content').classList.add('hidden');
     }
 });
 
-function salvar() {
-    if (auth.currentUser) set(listaRef, lista);
-}
+function salvar() { if (auth.currentUser) set(listaRef, lista); }
 
-// FUNÇÕES DA LISTA
 window.adicionarItem = () => {
     const input = document.getElementById('item');
     if (!input.value.trim()) return;
     lista.push({ nome: input.value.trim(), comprado: false, preco: '', qtd: 1 });
     input.value = '';
     salvar();
-    mostrarToast();
+    const t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2000);
 };
 
-window.toggle = (idx) => {
-    lista[idx].comprado = !lista[idx].comprado;
-    salvar();
-};
+window.toggle = (idx) => { lista[idx].comprado = !lista[idx].comprado; salvar(); };
 
 window.setPreco = (idx, valor) => {
     lista[idx].preco = valor;
     salvar();
-    atualizarTotalSomente();
+    atualizarTotal();
 };
 
-window.setQtd = (idx, valor) => {
-    lista[idx].qtd = parseInt(valor) || 1;
-    salvar();
-};
+window.setQtd = (idx, valor) => { lista[idx].qtd = parseInt(valor) || 1; salvar(); };
 
 window.removerItem = (idx) => {
     ultimoRemovido = { item: lista[idx], index: idx };
@@ -343,7 +197,7 @@ window.removerItem = (idx) => {
     salvar();
     const undo = document.getElementById('undo');
     undo.style.display = 'flex';
-    setTimeout(() => { undo.style.display = 'none'; }, 5000);
+    setTimeout(() => undo.style.display = 'none', 5000);
 };
 
 window.desfazer = () => {
@@ -351,6 +205,13 @@ window.desfazer = () => {
     lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
     salvar();
     document.getElementById('undo').style.display = 'none';
+};
+
+window.limparLista = () => {
+    if (confirm("Apagar todos os itens da lista?")) {
+        lista = [];
+        salvar();
+    }
 };
 
 function renderizar() {
@@ -374,11 +235,10 @@ function renderizar() {
                 <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
             </li>
         `;
-        const li = wrapper.querySelector('li');
-        configurarSwipe(li, idx);
+        configurarSwipe(wrapper.querySelector('li'), idx);
         container.appendChild(wrapper);
     });
-    atualizarTotalSomente();
+    atualizarTotal();
 }
 
 function configurarSwipe(li, index) {
@@ -394,13 +254,12 @@ function configurarSwipe(li, index) {
         let diff = currentX - startX;
         if (movendo && diff < -120) {
             li.style.transform = 'translateX(-100%)';
-            li.style.opacity = '0';
             setTimeout(() => window.removerItem(index), 200);
         } else { li.style.transform = 'translateX(0)'; }
     });
 }
 
-function atualizarTotalSomente() {
+function atualizarTotal() {
     let total = 0;
     lista.forEach(i => {
         if(i.comprado) {
@@ -411,15 +270,7 @@ function atualizarTotalSomente() {
     document.getElementById('total').innerText = total.toFixed(2);
 }
 
-function mostrarToast() {
-    const t = document.getElementById('toast');
-    t.style.display = 'block';
-    setTimeout(() => { t.style.display = 'none'; }, 2000);
-}
-
-document.getElementById('item').addEventListener('keypress', (e) => {
-    if(e.key === 'Enter') window.adicionarItem();
-});
+document.getElementById('item').addEventListener('keypress', (e) => { if(e.key === 'Enter') window.adicionarItem(); });
 </script>
 </body>
 </html>
