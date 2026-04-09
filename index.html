@@ -56,23 +56,44 @@
     .btn-add:active { transform: scale(0.98); }
 
     /* LISTA */
-    .item-wrapper { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 8px; background: #fff; }
-    .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; background: var(--danger); display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold; }
+   /* LISTA - AJUSTADO PARA NÃO APARECER O FUNDO VERMELHO */
+    .item-wrapper { 
+      position: relative; 
+      overflow: hidden; 
+      border-radius: 16px; 
+      margin-bottom: 8px; 
+      background: var(--danger); /* O vermelho fica aqui, escondido */
+    }
     
     li {
-      display: flex; align-items: center; gap: 12px; padding: 14px; list-style: none;
-      background: white; position: relative; z-index: 2; transition: transform 0.2s;
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      padding: 14px; 
+      list-style: none;
+      background: white; /* Fundo sólido para cobrir o vermelho */
+      position: relative; 
+      z-index: 2; 
+      transition: transform 0.2s, background 0.3s;
     }
-    li.comprado { background: #f8fafc; opacity: 0.6; }
-    li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
 
-    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; }
-    .nome { flex: 1; font-weight: 500; font-size: 16px; }
-    
-    .qtd, .preco { border: none; background: #f1f5f9; padding: 8px; border-radius: 8px; font-weight: bold; font-family: inherit; }
-    .qtd { width: 45px; text-align: center; }
-    .preco { width: 80px; text-align: right; color: var(--primary); }
+    /* ESTILO QUANDO COMPRADO - SEM TRANSPARÊNCIA NO FUNDO */
+    li.comprado { 
+      background: #f1f5f9; /* Um cinza bem claro em vez de ficar transparente */
+    }
 
+    li.comprado .nome { 
+      text-decoration: line-through; 
+      color: var(--text-light); 
+    }
+
+    li.comprado input[type="checkbox"] {
+      opacity: 0.5; /* Só o checkbox fica mais clarinho */
+    }
+
+    li.comprado .qtd, li.comprado .preco {
+      opacity: 0.7; /* Os valores ficam mais discretos */
+    }
     /* FOOTER & ACTIONS */
     .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; }
     .btn-limpar { background: none; border: none; color: var(--danger); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; text-decoration: underline; opacity: 0.7; }
