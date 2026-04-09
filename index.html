@@ -69,48 +69,25 @@
     
     .nome { flex: 1; font-weight: 500; font-size: 15px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
-    /* BOXES IGUAIS */
-    /* BOXES IGUAIS E CENTRALIZADOS */
+    /* BOXES PERFEITAMENTE CENTRALIZADOS */
     .qtd-box, .preco-box {
-      display: flex; 
-      align-items: center; 
-      justify-content: center; /* Centraliza o conteúdo horizontalmente */
-      background: #f8fafc; 
-      border-radius: 10px; 
-      border: 1px solid #e2e8f0;
-      width: 80px; /* Largura idêntica para os dois */
-      height: 40px; 
-      box-sizing: border-box; 
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;
+      width: 85px; height: 42px; box-sizing: border-box; flex-shrink: 0;
+      padding: 0 4px;
     }
 
-    /* CENTRALIZA OS DADOS DENTRO DOS BOXES */
+    .cifrao { font-size: 10px; font-weight: 800; color: var(--primary); margin-right: 2px; }
+
     .input-lista {
-      border: none !important; 
-      background: transparent !important; 
-      width: 100% !important; 
-      font-weight: 700; 
-      font-family: inherit; 
-      color: var(--text); 
-      outline: none; 
-      text-align: center; /* Centraliza o número (Quantidade) */
-      font-size: 14px;
+      border: none !important; background: transparent !important; 
+      width: 100% !important; font-weight: 700; font-family: inherit; 
+      color: var(--text); outline: none; text-align: center; font-size: 14px;
       padding: 0 !important;
     }
     
-    .preco-input { 
-      color: var(--primary-dark) !important; 
-      text-align: center; /* Centraliza o valor (Preço) */
-      flex: 1;
-    }
+    .preco-input { color: var(--primary-dark) !important; flex: 1; text-align: left; }
 
-    .cifrao { 
-      font-size: 10px; 
-      font-weight: 800; 
-      color: var(--primary); 
-      margin-left: 4px; /* Espaço sutil da borda esquerda */
-      margin-right: -2px; /* Aproxima o R$ do número */
-    }
     /* FOOTER */
     .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
     .btn-limpar { background: none; border: none; color: var(--danger); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; opacity: 0.8; }
@@ -220,24 +197,17 @@ window.adicionarItem = () => {
 
 window.toggle = (idx) => { lista[idx].comprado = !lista[idx].comprado; salvar(); };
 
-// Lógica de Preço: 5 vira 5,00 | 550 vira 550,00
 window.setPreco = (idx, valor) => {
     if (!valor) return;
-
-    // Se o usuário digitou apenas números (sem vírgula), adicionamos ,00
     if (!valor.includes(',')) {
         let puro = valor.replace(/[^\d]/g, "");
-        if (puro.length > 0) {
-            valor = puro + ",00";
-        }
+        if (puro.length > 0) valor = puro + ",00";
     } else {
-        // Se ele digitou vírgula, garantimos que tenha duas casas decimais
         let partes = valor.split(',');
         let inteiros = partes[0].replace(/[^\d]/g, "");
         let centavos = partes[1].replace(/[^\d]/g, "").padEnd(2, '0').slice(0, 2);
         valor = (inteiros || "0") + "," + centavos;
     }
-    
     lista[idx].preco = valor;
     salvar();
     atualizarTotal();
