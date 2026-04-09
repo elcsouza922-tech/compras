@@ -5,95 +5,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Compras Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
- <style>
-  :root {
-    --primary: #10b981;
-    --bg: #f1f5f9;
-    --card: rgba(255, 255, 255, 0.95);
-    --text: #1e293b;
-    --text-light: #64748b;
-    --danger: #ef4444;
-  }
+  <style>
+    :root {
+      --primary: #10b981;
+      --bg: #f1f5f9;
+      --card: rgba(255, 255, 255, 0.95);
+      --text: #1e293b;
+      --text-light: #64748b;
+      --danger: #ef4444;
+    }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    margin: 0; padding: 20px;
-    color: var(--text);
-    touch-action: pan-y;
-    padding-bottom: 140px;
-  }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0; padding: 20px;
+      color: var(--text);
+      touch-action: pan-y;
+      padding-bottom: 140px;
+    }
 
-  body::before {
-    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
-    z-index: -1;
-  }
+    body::before {
+      content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+      z-index: -1;
+    }
 
-  .container { position: relative; z-index: 10; max-width: 500px; margin: auto; }
+    .container { position: relative; z-index: 10; max-width: 500px; margin: auto; }
 
-  /* LOGIN */
-  .login-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px);
-    z-index: 5000; display: flex; align-items: center; justify-content: center;
-  }
-  .login-box {
-    background: white; padding: 40px 30px; border-radius: 28px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); width: 90%; max-width: 360px; text-align: center;
-  }
+    /* LOGIN */
+    .login-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px);
+      z-index: 5000; display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      background: white; padding: 40px 30px; border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); width: 90%; max-width: 360px; text-align: center;
+    }
 
-  /* HEADER */
-  .header-app { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .btn-sair { background: white; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-light); cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    /* HEADER */
+    .header-app { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-sair { background: white; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-light); cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-  /* INPUT SECTION */
-  .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 25px; }
-  input[type="text"], input[type="email"], input[type="password"] {
-    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;
-  }
-  .btn-add { background: var(--primary); color: white; width: 100%; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 16px; }
+    /* INPUT SECTION */
+    .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); margin-bottom: 25px; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;
+    }
+    .btn-add { background: var(--primary); color: white; width: 100%; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 16px; }
 
-  /* LISTA */
-  .item-wrapper { position: relative; overflow: hidden; border-radius: 18px; margin-bottom: 10px; background: var(--danger); }
-  .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold; z-index: 1; }
-  
-  li {
-    display: flex; align-items: center; gap: 12px; padding: 14px; list-style: none;
-    background: white; position: relative; z-index: 2; transition: transform 0.2s, background 0.3s;
-  }
-  
-  /* Quando marcar como comprado: fundo cinza sólido para não vazar o vermelho */
-  li.comprado { background: #f1f5f9; } 
-  li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
+    /* LISTA */
+    .item-wrapper { position: relative; overflow: hidden; border-radius: 18px; margin-bottom: 10px; background: var(--danger); }
+    .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: bold; z-index: 1; }
+    
+    li {
+      display: flex; align-items: center; gap: 12px; padding: 12px; list-style: none;
+      background: white; position: relative; z-index: 2; transition: transform 0.2s, background 0.3s;
+    }
+    
+    li.comprado { background: #f1f5f9; } 
+    li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
 
-  input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; border-radius: 6px; }
-  
-  .nome { flex: 1; font-weight: 500; font-size: 16px; color: var(--text); }
-  
-  /* ESTILIZAÇÃO DOS INPUTS DE QTD E PREÇO DENTRO DA LISTA */
-  .qtd, .preco { 
-    border: 1px solid #e2e8f0; 
-    background: #f8fafc; 
-    padding: 8px; 
-    border-radius: 10px; 
-    font-weight: 700; 
-    font-family: inherit; 
-    color: var(--text);
-    outline: none;
-  }
-  .qtd { width: 45px; text-align: center; }
-  .preco { width: 85px; text-align: right; color: var(--primary-dark); }
-  .preco::placeholder { color: #cbd5e1; font-weight: 400; }
+    input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; }
+    
+    .nome { flex: 1; font-weight: 500; font-size: 15px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    /* INPUTS DE QTD E PREÇO */
+    .qtd { 
+      border: 1px solid #e2e8f0; background: #f8fafc; padding: 8px; border-radius: 10px; 
+      font-weight: 700; width: 40px; text-align: center; font-family: inherit;
+    }
 
-  /* FOOTER */
-  .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-  .btn-limpar { background: none; border: none; color: var(--danger); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; opacity: 0.8; }
+    .preco-container {
+      display: flex; align-items: center; background: #f8fafc; border-radius: 10px; 
+      padding: 0 8px; border: 1px solid #e2e8f0; width: 90px; box-sizing: border-box;
+    }
+    
+    .cifrao { font-size: 11px; font-weight: 800; color: var(--primary); margin-right: 2px; }
 
-  #toast, .undo { position: fixed; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; display: none; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-  #toast { top: 20px; }
-  .undo { bottom: 110px; align-items: center; gap: 10px; }
-  .hidden { display: none !important; }
-</style>
+    .preco { 
+      border: none !important; background: transparent !important; padding: 8px 0 !important; 
+      width: 100% !important; font-weight: 700; font-family: inherit; 
+      color: var(--primary-dark); outline: none; text-align: right; font-size: 14px;
+    }
+
+    /* FOOTER */
+    .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+    .btn-limpar { background: none; border: none; color: var(--danger); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; opacity: 0.8; }
+
+    #toast, .undo { position: fixed; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; z-index: 9999; display: none; }
+    #toast { top: 20px; }
+    .undo { bottom: 110px; align-items: center; gap: 10px; }
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
 
@@ -127,7 +130,7 @@
 
 <div class="total-card">
     <div style="font-size: 11px; color: var(--text-light); font-weight: bold;">TOTAL COMPRADO</div>
-    <div style="font-size: 26px; font-weight: 800; color: var(--primary);">R$ <span id="total">0.00</span></div>
+    <div style="font-size: 26px; font-weight: 800; color: var(--primary);">R$ <span id="total">0,00</span></div>
 </div>
 
 <div id="undo" class="undo">
@@ -154,12 +157,12 @@ let lista = [];
 let listaRef;
 let ultimoRemovido = null;
 
-// LOGIN
+// LOGIN & LOGOUT
 window.fazerLogin = () => {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
     signInWithEmailAndPassword(auth, email, pass).catch(e => {
-        document.getElementById('login-erro').innerText = "Credenciais inválidas";
+        document.getElementById('login-erro').innerText = "Dados incorretos";
     });
 };
 
@@ -196,12 +199,17 @@ window.adicionarItem = () => {
 window.toggle = (idx) => { lista[idx].comprado = !lista[idx].comprado; salvar(); };
 
 window.setPreco = (idx, valor) => {
-    lista[idx].preco = valor;
+    // Aceita apenas números e vírgula
+    const formatado = valor.replace(/[^\d,]/g, "");
+    lista[idx].preco = formatado;
     salvar();
     atualizarTotal();
 };
 
-window.setQtd = (idx, valor) => { lista[idx].qtd = parseInt(valor) || 1; salvar(); };
+window.setQtd = (idx, valor) => { 
+    lista[idx].qtd = parseInt(valor) || 1; 
+    salvar(); 
+};
 
 window.removerItem = (idx) => {
     ultimoRemovido = { item: lista[idx], index: idx };
@@ -244,7 +252,10 @@ function renderizar() {
                 <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${idx})">
                 <span class="nome">${item.nome}</span>
                 <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${idx}, this.value)">
-                <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
+                <div class="preco-container">
+                    <span class="cifrao">R$</span>
+                    <input type="text" placeholder="0,00" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
+                </div>
             </li>
         `;
         configurarSwipe(wrapper.querySelector('li'), idx);
@@ -274,12 +285,12 @@ function configurarSwipe(li, index) {
 function atualizarTotal() {
     let total = 0;
     lista.forEach(i => {
-        if(i.comprado) {
+        if(i.comprado && i.preco) {
             const p = parseFloat(i.preco.toString().replace(',', '.')) || 0;
             total += p * (i.qtd || 1);
         }
     });
-    document.getElementById('total').innerText = total.toFixed(2);
+    document.getElementById('total').innerText = total.toLocaleString('pt-br', {minimumFractionDigits: 2});
 }
 
 document.getElementById('item').addEventListener('keypress', (e) => { if(e.key === 'Enter') window.adicionarItem(); });
