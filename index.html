@@ -6,147 +6,163 @@
   <title>Lista de Compras Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #10b981;
-      --primary-dark: #059669;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #1e293b;
-      --text-light: #64748b;
-      --danger: #ef4444;
-    }
+  :root {
+    --primary: #10b981;
+    --primary-dark: #059669;
+    --bg: #f1f5f9;
+    --card: rgba(255, 255, 255, 0.8); /* Transparência para o efeito vidro */
+    --text: #1e293b;
+    --text-light: #64748b;
+    --danger: #ef4444;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      margin: 0;
-      padding: 20px;
-      color: var(--text);
-      touch-action: pan-y;
-      padding-bottom: 140px; /* Espaço para o total fixo */
-    }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    padding: 20px;
+    color: var(--text);
+    touch-action: pan-y;
+    padding-bottom: 140px;
+  }
 
-    .container { max-width: 500px; margin: auto; }
+  /* GRADIENTE DE FUNDO ANIMADO (OPCIONAL, MAS LINDO) */
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+    z-index: -1;
+  }
 
-    h2 { text-align: center; font-weight: 700; margin-bottom: 20px; }
+  .container { max-width: 500px; margin: auto; }
 
-    /* ÁREA DE ENTRADA */
-    .input-section {
-      background: var(--card);
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-    }
+  h2 { text-align: center; font-weight: 700; margin-bottom: 20px; color: var(--text); }
 
-    input[type="text"] {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      font-size: 16px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
+  /* ESTILO MODERNO DO LOGIN (GLASSMORPHISM) */
+  .login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Fundo escuro suave */
+    backdrop-filter: blur(10px); /* O pulo do gato: desfoque */
+    z-index: 5000; display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .login-box {
+    background: var(--card);
+    padding: 40px 30px;
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    width: 90%; max-width: 360px;
+    text-align: center;
+    animation: scaleIn 0.3s ease-out;
+  }
 
-    .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+  .login-box h2 { font-size: 28px; background: linear-gradient(to right, var(--primary), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .login-box p { color: var(--text-light); font-size: 15px; margin-bottom: 30px; }
 
-    button {
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 14px;
-      padding: 12px;
-    }
+  /* INPUTS DA TELA DE LOGIN */
+  .login-box input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.8);
+  }
 
-    .btn-add { background: var(--primary); color: white; }
-    .btn-clear { background: #fee2e2; color: var(--danger); }
+  .login-box input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+    background: white;
+  }
 
-    /* LISTA */
-    .item-wrapper {
-      position: relative;
-      overflow: hidden;
-      border-radius: 16px;
-      margin-bottom: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    }
+  .btn-login {
+    background: linear-gradient(135deg, var(--primary) 0%, #10b981cc 100%);
+    color: white;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s;
+  }
 
-    .fundo-delete {
-      position: absolute;
-      right: 0; top: 0; bottom: 0; width: 100%;
-      background: var(--danger);
-      display: flex; align-items: center; justify-content: flex-end;
-      padding-right: 20px; color: white; font-weight: 600;
-    }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.4);
+  }
 
-    li {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--card); padding: 14px;
-      transition: transform 0.2s ease;
-      position: relative; z-index: 2;
-    }
+  #login-erro { color: var(--danger); font-size: 13px; margin-top: 15px; font-weight: 600; min-height: 18px; }
 
-    li.comprado { background: #f8fafc; opacity: 0.7; }
-    li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
+  /* BOTAO LOGOUT (ÍCONE NO TOPO) */
+  .header-app {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  }
+  .btn-logout {
+    background: none; border: none; color: var(--text-light); cursor: pointer; padding: 10px; font-size: 18px; border-radius: 50%; transition: 0.2s;
+  }
+  .btn-logout:hover { background: rgba(0,0,0,0.05); color: var(--danger); }
 
-    input[type="checkbox"] {
-      width: 24px; height: 24px; accent-color: var(--primary);
-      cursor: pointer;
-    }
+  /* Estilos da lista (mantidos e refinados) */
+  .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .input-section input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; box-sizing: border-box; }
+  .btn-add { background: var(--primary); color: white; width: 100%; border: none; border-radius: 12px; font-weight: 600; padding: 12px; cursor: pointer; }
+  .item-wrapper { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+  li { display: flex; align-items: center; gap: 12px; padding: 14px; list-style: none; transition: transform 0.2s ease; position: relative; z-index: 2; }
+  li.comprado { background: #f8fafc; opacity: 0.5; }
+  li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
+  input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; }
+  .nome { flex: 1; font-weight: 500; }
+  .qtd, .preco { border: none; background: #f1f5f9; padding: 8px; border-radius: 8px; font-weight: 700; font-family: inherit; }
+  .qtd { width: 45px; text-align: center; }
+  .preco { width: 70px; text-align: right; color: var(--primary-dark); }
+  .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -10px 15px rgba(0,0,0,0.05); }
+  .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; background: var(--danger); display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: 600; }
+  .hidden { display: none !important; }
 
-    .nome { flex: 1; font-weight: 500; font-size: 16px; }
-    
-    .qtd, .preco {
-      border: none; background: #f1f5f9;
-      padding: 8px; border-radius: 8px;
-      font-weight: 700; font-family: inherit;
-    }
-    .qtd { width: 45px; text-align: center; }
-    .preco { width: 75px; text-align: right; color: var(--primary-dark); }
-
-    /* FOOTER TOTAL */
-    .total-card {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--card); padding: 20px;
-      box-shadow: 0 -10px 15px rgba(0,0,0,0.05);
-      text-align: center; border-top: 1px solid #e2e8f0;
-      z-index: 100;
-    }
-    .total-valor { font-size: 26px; font-weight: 800; color: var(--primary-dark); }
-
-    .undo {
-      position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%);
-      background: #1e293b; color: white; padding: 12px 20px;
-      border-radius: 50px; display: none; z-index: 200; gap: 10px; align-items: center;
-    }
-    .undo button { background: #334155; color: var(--primary); padding: 4px 10px; font-size: 12px; }
-
-    .hidden { display: none !important; }
-  </style>
+  /* ANIMAÇÕES */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+</style>
 </head>
 <body>
-<div id="login-screen" class="home" style="background: var(--bg); position: fixed; z-index: 5000; width: 100%; height: 100%; top: 0; left: 0;">
-    <div class="container" style="max-width: 350px;">
-        <h2>🔐 Acesso Privado</h2>
-        <input type="email" id="login-email" placeholder="E-mail">
-        <input type="password" id="login-pass" placeholder="Senha">
-        <button class="btn-add" onclick="fazerLogin()">Entrar</button>
-        <p id="login-erro" style="color: var(--danger); font-size: 12px; margin-top: 10px;"></p>
+
+<div id="toast">Item adicionado!</div>
+
+<div id="login-screen" class="login-overlay">
+    <div class="login-box">
+        <div style="font-size: 50px; margin-bottom: 20px;">🔐</div>
+        <h2>Acesso Vip</h2>
+        <p>Digite suas credenciais para entrar na sua lista pessoal.</p>
+        <input type="email" id="login-email" placeholder="Seu e-mail">
+        <input type="password" id="login-pass" placeholder="Sua senha">
+        <button class="btn-login" onclick="fazerLogin()">Entrar no App</button>
+        <p id="login-erro"></p>
     </div>
 </div>
-<div class="container">
-  <h2>🛒 Lista de Compras</h2>
+
+<div id="app-content" class="container hidden">
+  <div class="header-app">
+      <h2 style="margin: 0;">🛒 Minha Lista</h2>
+      <button class="btn-logout" onclick="logout()" title="Sair da conta">✕</button>
+  </div>
 
   <div class="input-section">
     <input type="text" id="item" placeholder="O que você precisa comprar?">
     <div class="btn-group">
-      <button class="btn-add" onclick="adicionarItem()">Adicionar Item</button>
-      <button class="btn-clear" onclick="limparLista()">Limpar</button>
-    </div>
+      <button class="btn-add" onclick="adicionarItem()">Adicionar à Lista</button>
+      <button class="btn-clear hidden" onclick="limparLista()">Limpar</button> </div>
   </div>
-
+  
   <div id="lista"></div>
 </div>
 
@@ -161,6 +177,12 @@
 </div>
 
 <script type="module">
+  // Dentro do seu script type="module"
+window.logout = () => {
+  if (confirm("Deseja realmente sair da sua conta?")) {
+    signOut(auth);
+  }
+};
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 // Adicione o import de AUTH
