@@ -151,11 +151,38 @@
   <button onclick="desfazer()">Desfazer</button>
 </div>
 
-<script>
-let lista = JSON.parse(localStorage.getItem('listaCompras')) || [];
+<script type="module">
+// 1. Conecta com os servidores do Google (Firebase)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+// 2. Configuração do seu "Baú" (Pegue esses dados no Console do Firebase)
+const firebaseConfig = {
+  apiKey: "AIzaSyBK3e1x0ZgjZEjHgrJy33jpDl30y2QUww0",
+  databaseURL: "https://listacompras-70e30-default-rtdb.firebaseio.com",
+  projectId: "listacompras-70e30",
+};
+
+// 3. Inicializa a conexão
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const listaRef = ref(db, 'minha_lista_pessoal'); // Nome da lista na nuvem
+
+let lista = []; // Ela começa vazia e o Firebase preenche abaixo
 let ultimoRemovido = null;
 
-function salvar() { localStorage.setItem('listaCompras', JSON.stringify(lista)); }
+// 4. ESSA É A MÁGICA: Ouve mudanças em tempo real
+// Se a outra pessoa marcar um item, sua tela atualiza sozinha aqui
+onValue(listaRef, (snapshot) => {
+  const data = snapshot.val();
+  lista = data || [];
+  renderizar(); // Atualiza a tela com os dados novos que vieram da nuvem
+});
+
+// 5. NOVA FUNÇÃO SALVAR: Agora envia para a internet
+function salvar() { 
+  set(listaRef, lista); 
+}
 
 function parseValor(v) {
   if (!v) return 0;
