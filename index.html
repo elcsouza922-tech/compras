@@ -6,174 +6,215 @@
   <title>Lista de Compras Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-  :root {
-    --primary: #10b981;
-    --primary-dark: #059669;
-    --bg: #f1f5f9;
-    --card: rgba(255, 255, 255, 0.8); /* Transparência para o efeito vidro */
-    --text: #1e293b;
-    --text-light: #64748b;
-    --danger: #ef4444;
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-  }
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --bg: #f1f5f9;
+      --card: rgba(255, 255, 255, 0.85);
+      --text: #1e293b;
+      --text-light: #64748b;
+      --danger: #ef4444;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg);
-    margin: 0;
-    padding: 20px;
-    color: var(--text);
-    touch-action: pan-y;
-    padding-bottom: 140px;
-  }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: var(--text);
+      touch-action: pan-y;
+      padding-bottom: 140px;
+      min-height: 100vh;
+    }
 
-  /* GRADIENTE DE FUNDO ANIMADO (OPCIONAL, MAS LINDO) */
-/* O fundo deve ficar no fundo de tudo */
-body::before {
-  content: ''; 
-  position: fixed; 
-  top: 0; left: 0; 
-  width: 100%; height: 100%;
-  background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
-  z-index: -1; /* Garante que fique atrás */
-}
+    /* Fundo gradiente fixo atrás de tudo */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+      z-index: -1;
+    }
 
-/* A tela de login precisa de prioridade máxima */
-.login-overlay {
-  z-index: 5000; 
-  position: fixed;
-  /* ... restante igual ... */
-}
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 500px;
+      margin: auto;
+    }
 
-/* O conteúdo do app precisa aparecer */
-.container {
-  position: relative; /* Adicione isso */
-  z-index: 10;       /* Adicione isso */
-  max-width: 500px; 
-  margin: auto; 
-}
-  
-  .login-box {
-    background: var(--card);
-    padding: 40px 30px;
-    border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-    width: 90%; max-width: 360px;
-    text-align: center;
-    animation: scaleIn 0.3s ease-out;
-  }
+    /* TELA DE LOGIN (Glassmorphism) */
+    .login-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .login-box h2 { font-size: 28px; background: linear-gradient(to right, var(--primary), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .login-box p { color: var(--text-light); font-size: 15px; margin-bottom: 30px; }
+    .login-box {
+      background: var(--card);
+      padding: 40px 30px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+      animation: scaleIn 0.3s ease-out;
+    }
 
-  /* INPUTS DA TELA DE LOGIN */
-  .login-box input {
-    width: 100%;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 12px;
-    box-sizing: border-box;
-    font-size: 16px;
-    transition: all 0.2s;
-    background: rgba(255, 255, 255, 0.8);
-  }
+    .login-box h2 { 
+      font-size: 28px; 
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--primary), #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-  .login-box input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-    background: white;
-  }
+    .login-box input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
 
-  .btn-login {
-    background: linear-gradient(135deg, var(--primary) 0%, #10b981cc 100%);
-    color: white;
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 16px;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 15px;
-    box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
-    transition: all 0.3s;
-  }
+    .btn-login {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-  .btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.4);
-  }
+    /* APP CONTENT */
+    .header-app {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-  #login-erro { color: var(--danger); font-size: 13px; margin-top: 15px; font-weight: 600; min-height: 18px; }
+    .btn-logout {
+      background: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: var(--shadow);
+    }
 
-  /* BOTAO LOGOUT (ÍCONE NO TOPO) */
-  .header-app {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-  }
-  .btn-logout {
-    background: none; border: none; color: var(--text-light); cursor: pointer; padding: 10px; font-size: 18px; border-radius: 50%; transition: 0.2s;
-  }
-  .btn-logout:hover { background: rgba(0,0,0,0.05); color: var(--danger); }
+    .input-section {
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
 
-  /* Estilos da lista (mantidos e refinados) */
-  .input-section { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
-  .input-section input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; box-sizing: border-box; }
-  .btn-add { background: var(--primary); color: white; width: 100%; border: none; border-radius: 12px; font-weight: 600; padding: 12px; cursor: pointer; }
-  .item-wrapper { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-  li { display: flex; align-items: center; gap: 12px; padding: 14px; list-style: none; transition: transform 0.2s ease; position: relative; z-index: 2; }
-  li.comprado { background: #f8fafc; opacity: 0.5; }
-  li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
-  input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer; }
-  .nome { flex: 1; font-weight: 500; }
-  .qtd, .preco { border: none; background: #f1f5f9; padding: 8px; border-radius: 8px; font-weight: 700; font-family: inherit; }
-  .qtd { width: 45px; text-align: center; }
-  .preco { width: 70px; text-align: right; color: var(--primary-dark); }
-  .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -10px 15px rgba(0,0,0,0.05); }
-  .fundo-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 100%; background: var(--danger); display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: white; font-weight: 600; }
-  .hidden { display: none !important; }
+    .btn-add {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-  /* ANIMAÇÕES */
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    /* LISTA DE ITENS */
+    .item-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      background: white;
+    }
 
-    /* Estilo do aviso de 'Adicionado' */
-#toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(30, 41, 59, 0.9);
-  color: white;
-  padding: 12px 25px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 600;
-  z-index: 9999;
-  display: none; /* Começa escondido */
-  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-}
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      list-style: none;
+      position: relative;
+      z-index: 2;
+      background: white;
+      transition: transform 0.2s;
+    }
 
-/* Estilo do aviso de 'Desfazer' */
-.undo {
-  position: fixed;
-  bottom: 110px; /* Fica acima do total */
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1e293b;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 50px;
-  display: none; /* Começa escondido */
-  z-index: 9999;
-  gap: 10px;
-  align-items: center;
-  box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-}
-    
-</style>
+    li.comprado { opacity: 0.6; }
+    li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
+
+    .nome { flex: 1; font-weight: 500; }
+    .qtd, .preco {
+      border: none;
+      background: #f1f5f9;
+      padding: 8px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .qtd { width: 45px; }
+    .preco { width: 75px; text-align: right; color: var(--primary-dark); }
+
+    .fundo-delete {
+      position: absolute;
+      right: 0; top: 0; bottom: 0; width: 100%;
+      background: var(--danger);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 20px;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* TOTAL E AVISOS */
+    .total-card {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      z-index: 100;
+    }
+
+    #toast, .undo {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 50px;
+      z-index: 9999;
+      display: none;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+    }
+    #toast { top: 20px; }
+    .undo { bottom: 110px; align-items: center; gap: 10px; }
+    .undo button { background: var(--primary); border: none; color: white; border-radius: 10px; padding: 5px 10px; cursor: pointer; }
+
+    .hidden { display: none !important; }
+
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  </style>
 </head>
 <body>
 
@@ -183,33 +224,31 @@ body::before {
     <div class="login-box">
         <div style="font-size: 50px; margin-bottom: 20px;">🔐</div>
         <h2>Acesso Vip</h2>
-        <p>Digite suas credenciais para entrar na sua lista pessoal.</p>
-        <input type="email" id="login-email" placeholder="Seu e-mail">
-        <input type="password" id="login-pass" placeholder="Sua senha">
-        <button class="btn-login" onclick="fazerLogin()">Entrar no App</button>
-        <p id="login-erro"></p>
+        <p>Sua lista de compras segura.</p>
+        <input type="email" id="login-email" placeholder="E-mail">
+        <input type="password" id="login-pass" placeholder="Senha">
+        <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+        <p id="login-erro" style="color:red; font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
 
 <div id="app-content" class="container hidden">
   <div class="header-app">
       <h2 style="margin: 0;">🛒 Minha Lista</h2>
-      <button class="btn-logout" onclick="logout()" title="Sair da conta">✕</button>
+      <button class="btn-logout" onclick="logout()">✕</button>
   </div>
 
   <div class="input-section">
-    <input type="text" id="item" placeholder="O que você precisa comprar?">
-    <div class="btn-group">
-      <button class="btn-add" onclick="adicionarItem()">Adicionar à Lista</button>
-      <button class="btn-clear hidden" onclick="limparLista()">Limpar</button> </div>
+    <input type="text" id="item" placeholder="O que vamos comprar?">
+    <button class="btn-add" onclick="adicionarItem()">Adicionar Item</button>
   </div>
   
   <div id="lista"></div>
 </div>
 
 <div class="total-card">
-    <div style="font-size: 12px; color: var(--text-light); font-weight: 600;">TOTAL COMPRADO</div>
-    <div class="total-valor">R$ <span id="total">0.00</span></div>
+    <div style="font-size: 11px; color: var(--text-light); font-weight: bold;">TOTAL COMPRADO</div>
+    <div style="font-size: 24px; font-weight: 800; color: var(--primary-dark);">R$ <span id="total">0.00</span></div>
 </div>
 
 <div id="undo" class="undo">
@@ -218,16 +257,9 @@ body::before {
 </div>
 
 <script type="module">
-  // Dentro do seu script type="module"
-window.logout = () => {
-  if (confirm("Deseja realmente sair da sua conta?")) {
-    signOut(auth);
-  }
-};
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-// Adicione o import de AUTH
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBK3e1x0ZgjZEjHgrJy33jpDl30y2QUww0",
@@ -237,167 +269,157 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const auth = getAuth(app); // Inicializa o Auth
+const auth = getAuth(app);
 
 let lista = [];
 let listaRef;
+let ultimoRemovido = null;
 
-// FUNÇÃO DE LOGIN
+// LOGIN & LOGOUT
 window.fazerLogin = () => {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
-    const erro = document.getElementById('login-erro');
-
-    signInWithEmailAndPassword(auth, email, pass)
-        .catch(e => erro.innerText = "Acesso negado: Verifique seus dados.");
+    signInWithEmailAndPassword(auth, email, pass).catch(e => {
+        document.getElementById('login-erro').innerText = "Dados incorretos!";
+    });
 };
 
-// MONITOR DE ESTADO (O coração do login)
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // Usuário logado: Esconde a tela de login e carrega os dados
-        document.getElementById('login-screen').classList.add('hidden');
-        
-        // DICA: Você pode criar uma lista única por usuário usando o ID dele (user.uid)
-        listaRef = ref(db, 'usuarios/' + user.uid + '/lista');
+window.logout = () => {
+    if (confirm("Sair da conta?")) signOut(auth);
+};
 
+// ESTADO DO USUÁRIO
+onAuthStateChanged(auth, (user) => {
+    const loginScreen = document.getElementById('login-screen');
+    const appContent = document.getElementById('app-content');
+
+    if (user) {
+        loginScreen.classList.add('hidden');
+        appContent.classList.remove('hidden');
+        listaRef = ref(db, 'usuarios/' + user.uid + '/lista');
         onValue(listaRef, (snapshot) => {
             lista = snapshot.val() || [];
             renderizar();
         });
     } else {
-        // Usuário deslogado: Mostra a tela de login
-        document.getElementById('login-screen').classList.remove('hidden');
+        loginScreen.classList.remove('hidden');
+        appContent.classList.add('hidden');
     }
 });
 
 function salvar() {
-    if (auth.currentUser) {
-        set(listaRef, lista);
-    }
+    if (auth.currentUser) set(listaRef, lista);
 }
 
-function parseValor(v) {
-  if (!v) return 0;
-  return parseFloat(v.toString().replace(',', '.')) || 0;
-}
-
-// 5. FUNÇÕES GLOBAIS (window.) para funcionar com onclick do HTML
+// FUNÇÕES DA LISTA
 window.adicionarItem = () => {
     const input = document.getElementById('item');
     if (!input.value.trim()) return;
-
     lista.push({ nome: input.value.trim(), comprado: false, preco: '', qtd: 1 });
     input.value = '';
     salvar();
-
-    // --- FAZ O TOAST APARECER ---
-    const toast = document.getElementById('toast');
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 2000); // Some após 2 segundos
+    mostrarToast();
 };
 
-window.toggle = (index) => {
-  lista[index].comprado = !lista[index].comprado;
-  salvar();
-};
-
-window.setPreco = (index, valor) => {
-  lista[index].preco = valor;
-  salvar();
-  atualizarTotalSomente();
-};
-
-window.setQtd = (index, valor) => {
-  lista[index].qtd = parseInt(valor) || 1;
-  salvar();
-};
-
-window.limparLista = () => {
-  if (confirm("Deseja apagar TODOS os itens da lista?")) {
-    lista = [];
+window.toggle = (idx) => {
+    lista[idx].comprado = !lista[idx].comprado;
     salvar();
-  }
+};
+
+window.setPreco = (idx, valor) => {
+    lista[idx].preco = valor;
+    salvar();
+    atualizarTotalSomente();
+};
+
+window.setQtd = (idx, valor) => {
+    lista[idx].qtd = parseInt(valor) || 1;
+    salvar();
+};
+
+window.removerItem = (idx) => {
+    ultimoRemovido = { item: lista[idx], index: idx };
+    lista.splice(idx, 1);
+    salvar();
+    const undo = document.getElementById('undo');
+    undo.style.display = 'flex';
+    setTimeout(() => { undo.style.display = 'none'; }, 5000);
 };
 
 window.desfazer = () => {
-  if (!ultimoRemovido) return;
-  lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
-  salvar();
-  document.getElementById('undo').style.display = 'none';
+    if (!ultimoRemovido) return;
+    lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
+    salvar();
+    document.getElementById('undo').style.display = 'none';
 };
 
-window.removerItem = (index) => {
-  ultimoRemovido = { item: lista[index], index };
-  lista.splice(index, 1);
-  salvar();
-  const undo = document.getElementById('undo');
-  undo.style.display = 'flex';
-  setTimeout(() => { undo.style.display = 'none'; }, 5000);
-};
-
-// 6. RENDERIZAÇÃO DA TELA
 function renderizar() {
-  const container = document.getElementById('lista');
-  container.innerHTML = '';
+    const container = document.getElementById('lista');
+    container.innerHTML = '';
 
-  const pendentes = lista.filter(i => !i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
-  const comprados = lista.filter(i => i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
-  const listaOrdenada = [...pendentes, ...comprados];
+    const pendentes = lista.filter(i => !i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
+    const comprados = lista.filter(i => i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
+    const ordenada = [...pendentes, ...comprados];
 
-  listaOrdenada.forEach(item => {
-    const idx = lista.indexOf(item);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'item-wrapper';
-
-    wrapper.innerHTML = `
-      <div class="fundo-delete">Excluir</div>
-      <li class="${item.comprado ? 'comprado' : ''}">
-        <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${idx})">
-        <span class="nome">${item.nome}</span>
-        <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${idx}, this.value)">
-        <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
-      </li>
-    `;
-
-    const li = wrapper.querySelector('li');
-    configurarSwipe(li, idx);
-    container.appendChild(wrapper);
-  });
-
-  atualizarTotalSomente();
+    ordenada.forEach(item => {
+        const idx = lista.indexOf(item);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'item-wrapper';
+        wrapper.innerHTML = `
+            <div class="fundo-delete">Excluir</div>
+            <li class="${item.comprado ? 'comprado' : ''}">
+                <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${idx})">
+                <span class="nome">${item.nome}</span>
+                <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${idx}, this.value)">
+                <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
+            </li>
+        `;
+        const li = wrapper.querySelector('li');
+        configurarSwipe(li, idx);
+        container.appendChild(wrapper);
+    });
+    atualizarTotalSomente();
 }
 
 function configurarSwipe(li, index) {
-  let startX = 0, currentX = 0, movendo = false;
-  li.addEventListener('touchstart', e => { startX = e.touches[0].clientX; movendo = false; }, {passive: true});
-  li.addEventListener('touchmove', e => {
-    currentX = e.touches[0].clientX;
-    let diff = currentX - startX;
-    if (Math.abs(diff) > 10) movendo = true;
-    if (diff < 0) li.style.transform = `translateX(${diff}px)`;
-  }, {passive: true});
-  li.addEventListener('touchend', () => {
-    let diff = currentX - startX;
-    if (movendo && diff < -120) {
-      li.style.transform = 'translateX(-100%)';
-      li.style.opacity = '0';
-      setTimeout(() => window.removerItem(index), 200);
-    } else { li.style.transform = 'translateX(0)'; }
-  });
+    let startX = 0, currentX = 0, movendo = false;
+    li.addEventListener('touchstart', e => { startX = e.touches[0].clientX; movendo = false; }, {passive: true});
+    li.addEventListener('touchmove', e => {
+        currentX = e.touches[0].clientX;
+        let diff = currentX - startX;
+        if (Math.abs(diff) > 10) movendo = true;
+        if (diff < 0) li.style.transform = `translateX(${diff}px)`;
+    }, {passive: true});
+    li.addEventListener('touchend', () => {
+        let diff = currentX - startX;
+        if (movendo && diff < -120) {
+            li.style.transform = 'translateX(-100%)';
+            li.style.opacity = '0';
+            setTimeout(() => window.removerItem(index), 200);
+        } else { li.style.transform = 'translateX(0)'; }
+    });
 }
 
 function atualizarTotalSomente() {
-  let total = 0;
-  lista.forEach(i => { if(i.comprado) total += parseValor(i.preco) * (i.qtd || 1); });
-  document.getElementById('total').innerText = total.toFixed(2);
+    let total = 0;
+    lista.forEach(i => {
+        if(i.comprado) {
+            const p = parseFloat(i.preco.toString().replace(',', '.')) || 0;
+            total += p * (i.qtd || 1);
+        }
+    });
+    document.getElementById('total').innerText = total.toFixed(2);
 }
 
-// Atalho Enter
-document.getElementById('item').addEventListener('keypress', (e) => {
-  if(e.key === 'Enter') window.adicionarItem();
-});
+function mostrarToast() {
+    const t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2000);
+}
 
+document.getElementById('item').addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') window.adicionarItem();
+});
 </script>
 </body>
 </html>
