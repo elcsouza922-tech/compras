@@ -23,23 +23,12 @@
       padding: 20px;
       color: var(--text);
       touch-action: pan-y;
+      padding-bottom: 120px; /* Espaço para o total fixo */
     }
 
-    h2 {
-      text-align: center;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
+    .container { max-width: 500px; margin: auto; }
 
-    .container {
-      max-width: 500px;
-      margin: auto;
-    }
+    h2 { text-align: center; font-weight: 700; margin-bottom: 20px; }
 
     /* ÁREA DE ENTRADA */
     .input-section {
@@ -47,221 +36,113 @@
       padding: 20px;
       border-radius: 20px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
-    input, select {
-      padding: 12px 16px;
-      margin: 8px 0;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+    input[type="text"] {
       width: 100%;
-      box-sizing: border-box;
-      font-family: inherit;
-      font-size: 15px;
-      transition: all 0.2s;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-    }
-
-    button.btn-add {
-      background: var(--primary);
-      color: white;
-      border: none;
       padding: 14px;
       border-radius: 12px;
-      width: 100%;
-      font-weight: 600;
+      border: 1px solid #e2e8f0;
       font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.2s;
+      box-sizing: border-box;
+      margin-bottom: 10px;
     }
 
-    button.btn-add:hover {
-      background: var(--primary-dark);
+    .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 14px;
+      padding: 12px;
     }
+
+    .btn-add { background: var(--primary); color: white; }
+    .btn-clear { background: #fee2e2; color: var(--danger); }
 
     /* LISTA */
-    .secao-titulo {
-      margin: 25px 0 12px 5px;
-      font-weight: 700;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-light);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
     .item-wrapper {
       position: relative;
       overflow: hidden;
       border-radius: 16px;
-      margin-bottom: 10px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .fundo-delete {
       position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 100%;
+      right: 0; top: 0; bottom: 0; width: 100%;
       background: var(--danger);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 25px;
-      color: white;
-      font-weight: 600;
-      font-size: 14px;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 20px; color: white; font-weight: 600;
     }
 
     li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--card);
-      padding: 14px;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      z-index: 2;
-      list-style: none;
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card); padding: 14px;
+      transition: transform 0.2s ease;
+      position: relative; z-index: 2;
     }
 
-    li.comprado {
-      background: #f8fafc;
+    li.comprado { background: #f8fafc; opacity: 0.7; }
+    li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
+
+    input[type="checkbox"] {
+      width: 22px; height: 22px; accent-color: var(--primary);
     }
 
-    li.comprado .nome {
-      text-decoration: line-through;
-      color: var(--text-light);
+    .nome { flex: 1; font-weight: 500; }
+    
+    .qtd, .preco {
+      border: none; background: #f1f5f9;
+      padding: 8px; border-radius: 8px;
+      font-weight: 700; font-family: inherit;
     }
+    .qtd { width: 45px; text-align: center; }
+    .preco { width: 70px; text-align: right; color: var(--primary-dark); }
 
-    li input[type="checkbox"] {
-      width: 22px;
-      height: 22px;
-      margin: 0;
-      cursor: pointer;
-      accent-color: var(--primary);
-    }
-
-    .nome {
-      flex: 1;
-      font-weight: 500;
-      font-size: 15px;
-    }
-
-    .qtd {
-      width: 50px;
-      text-align: center;
-      background: #f1f5f9;
-      border: none;
-      padding: 6px;
-      font-weight: 600;
-      margin: 0;
-    }
-
-    .preco {
-      width: 80px;
-      text-align: right;
-      background: #f1f5f9;
-      border: none;
-      padding: 6px;
-      color: var(--primary-dark);
-      font-weight: 600;
-      margin: 0;
-    }
-
-    /* UNDO */
-    .undo {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 50px;
-      display: none;
-      z-index: 10000;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-      font-size: 14px;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .undo button {
-      background: #334155;
-      color: var(--primary);
-      border: none;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 12px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    /* TOTAL BAR */
+    /* FOOTER TOTAL */
     .total-card {
-      position: sticky;
-      bottom: 0;
-      background: var(--card);
-      margin-top: 30px;
-      padding: 20px;
-      border-radius: 20px 20px 0 0;
-      box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.05);
-      text-align: center;
-      border-top: 1px solid #e2e8f0;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card); padding: 20px;
+      box-shadow: 0 -10px 15px rgba(0,0,0,0.05);
+      text-align: center; border-top: 1px solid #e2e8f0;
+      z-index: 100;
     }
+    .total-valor { font-size: 24px; font-weight: 800; color: var(--primary-dark); }
 
-    .total-label {
-      font-size: 14px;
-      color: var(--text-light);
-      margin-bottom: 5px;
+    .undo {
+      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+      background: #1e293b; color: white; padding: 12px 20px;
+      border-radius: 50px; display: none; z-index: 200; gap: 10px;
     }
+    .undo button { background: #334155; color: var(--primary); padding: 4px 10px; font-size: 12px; }
 
-    .total-valor {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--primary-dark);
-    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>🛒 Minha Lista</h2>
+  <h2>🛒 Lista de Compras</h2>
 
   <div class="input-section">
-    <label style="font-size: 12px; font-weight: 600; color: var(--text-light);">ITEM</label>
-    <input type="text" id="item" placeholder="Ex: Batata, Picanha...">
-    
-    <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-top: 10px;">CATEGORIA</label>
-    <select id="categoria">
-      <option>Hortifruti</option>
-      <option>Açougue</option>
-      <option>Padaria</option>
-      <option>Bebidas</option>
-      <option>Limpeza</option>
-      <option>Higiene</option>
-      <option>Outros</option>
-    </select>
-    <button class="btn-add" onclick="adicionarItem()">Adicionar à Lista</button>
+    <input type="text" id="item" placeholder="O que você precisa comprar?">
+    <div class="btn-group">
+      <button class="btn-add" onclick="adicionarItem()">Adicionar Item</button>
+      <button class="btn-clear" onclick="limparLista()">Limpar</button>
+    </div>
   </div>
 
   <div id="lista"></div>
 </div>
 
 <div class="total-card">
-    <div class="total-label">Subtotal Comprado</div>
+    <div style="font-size: 12px; color: var(--text-light);">TOTAL COMPRADO</div>
     <div class="total-valor">R$ <span id="total">0.00</span></div>
 </div>
 
@@ -271,152 +152,80 @@
 </div>
 
 <script>
-// Mantive toda a sua lógica funcional, apenas adicionei a classe CSS 'comprado' no render
 let lista = JSON.parse(localStorage.getItem('listaCompras')) || [];
-let aprendizado = JSON.parse(localStorage.getItem('aprendizadoCategorias')) || {};
 let ultimoRemovido = null;
 
-function salvar() {
-  localStorage.setItem('listaCompras', JSON.stringify(lista));
-}
+function salvar() { localStorage.setItem('listaCompras', JSON.stringify(lista)); }
 
 function parseValor(v) {
   if (!v) return 0;
   return parseFloat(v.toString().replace(',', '.')) || 0;
 }
 
-function sugerirCategoria(nome) {
-  const n = nome.toLowerCase();
-  if (aprendizado[n]) return aprendizado[n];
-  if (/(banana|maçã|maca|laranja|tomate|alface|cebola|batata|fruta|legume)/.test(n)) return 'Hortifruti';
-  if (/(carne|frango|bife|linguiça|linguica|peixe|fraldinha|picanha)/.test(n)) return 'Açougue';
-  if (/(pão|pao|bolo|biscoito|bolacha)/.test(n)) return 'Padaria';
-  if (/(refrigerante|suco|água|agua|cerveja|vinho|refri)/.test(n)) return 'Bebidas';
-  if (/(detergente|sabão|sabao|amaciante|desinfetante)/.test(n)) return 'Limpeza';
-  if (/(shampoo|sabonete|papel|pasta|dente)/.test(n)) return 'Higiene';
-  return 'Outros';
-}
-
-const inputItem = document.getElementById('item');
-const selectCategoria = document.getElementById('categoria');
-
-inputItem.addEventListener('input', () => {
-  selectCategoria.value = sugerirCategoria(inputItem.value);
-});
-
 function renderizar() {
   const container = document.getElementById('lista');
   container.innerHTML = '';
 
-  const categorias = {};
-  lista.forEach(item => {
-    const cat = item.categoria || 'Outros';
-    if (!categorias[cat]) categorias[cat] = [];
-    categorias[cat].push(item);
-  });
-
+  // Separa e ordena: primeiro não comprados (A-Z), depois comprados (A-Z)
+  const pendentes = lista.filter(i => !i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
+  const comprados = lista.filter(i => i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
+  
+  const listaOrdenada = [...pendentes, ...comprados];
   let total = 0;
 
-  Object.keys(categorias).sort().forEach(cat => {
-    const titulo = document.createElement('div');
-    titulo.className = 'secao-titulo';
-    titulo.innerText = cat;
-    container.appendChild(titulo);
+  listaOrdenada.forEach(item => {
+    const indexOriginal = lista.indexOf(item);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'item-wrapper';
 
-    categorias[cat].sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(item => {
-      const index = lista.indexOf(item);
-      const wrapper = document.createElement('div');
-      wrapper.className = 'item-wrapper';
+    const fundo = document.createElement('div');
+    fundo.className = 'fundo-delete';
+    fundo.innerText = 'Excluir';
 
-      const fundo = document.createElement('div');
-      fundo.className = 'fundo-delete';
-      fundo.innerText = 'Excluir';
+    const li = document.createElement('li');
+    if(item.comprado) li.className = 'comprado';
 
-      const li = document.createElement('li');
-      if(item.comprado) li.className = 'comprado';
+    li.innerHTML = `
+      <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${indexOriginal})">
+      <span class="nome">${item.nome}</span>
+      <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${indexOriginal}, this.value)">
+      <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${indexOriginal}, this.value)">
+    `;
 
-      li.innerHTML = `
-        <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${index})">
-        <span class="nome">${item.nome}</span>
-        <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${index}, this.value)">
-        <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${index}, this.value)">
-      `;
-
-      // Lógica de Swipe mantida
-      let startX = 0;
-      let currentX = 0;
-      let movendo = false;
-
-      li.addEventListener('touchstart', e => {
-        startX = e.touches[0].clientX;
-        movendo = false;
-      }, {passive: true});
-
-      li.addEventListener('touchmove', e => {
-        currentX = e.touches[0].clientX;
-        let diff = currentX - startX;
-        if (Math.abs(diff) > 10) movendo = true;
-        if (diff < 0) li.style.transform = `translateX(${diff}px)`;
-      }, {passive: true});
-
-      li.addEventListener('touchend', () => {
-        let diff = currentX - startX;
-        if (movendo && diff < -120) {
-          if (navigator.vibrate) navigator.vibrate(50);
-          animarRemocao(li, index);
-        } else {
-          li.style.transform = 'translateX(0)';
-        }
-      });
-
-      if (item.comprado && item.preco) {
-        total += parseValor(item.preco) * (item.qtd || 1);
-      }
-
-      wrapper.appendChild(fundo);
-      wrapper.appendChild(li);
-      container.appendChild(wrapper);
+    // Efeito Swipe
+    let startX = 0, currentX = 0, movendo = false;
+    li.addEventListener('touchstart', e => { startX = e.touches[0].clientX; movendo = false; }, {passive: true});
+    li.addEventListener('touchmove', e => {
+      currentX = e.touches[0].clientX;
+      let diff = currentX - startX;
+      if (Math.abs(diff) > 10) movendo = true;
+      if (diff < 0) li.style.transform = `translateX(${diff}px)`;
+    }, {passive: true});
+    li.addEventListener('touchend', () => {
+      let diff = currentX - startX;
+      if (movendo && diff < -120) {
+        if (navigator.vibrate) navigator.vibrate(50);
+        animarRemocao(li, indexOriginal);
+      } else { li.style.transform = 'translateX(0)'; }
     });
+
+    if (item.comprado && item.preco) {
+      total += parseValor(item.preco) * (item.qtd || 1);
+    }
+
+    wrapper.appendChild(fundo);
+    wrapper.appendChild(li);
+    container.appendChild(wrapper);
   });
 
   document.getElementById('total').innerText = total.toFixed(2);
 }
 
-function animarRemocao(li, index) {
-  li.style.transform = 'translateX(-100%)';
-  li.style.opacity = '0';
-  setTimeout(() => { remover(index); }, 200);
-}
-
-function remover(index) {
-  ultimoRemovido = { item: lista[index], index };
-  lista.splice(index, 1);
-  salvar();
-  renderizar();
-
-  const undo = document.getElementById('undo');
-  undo.style.display = 'flex';
-  setTimeout(() => { undo.style.display = 'none'; }, 5000);
-}
-
-function desfazer() {
-  if (!ultimoRemovido) return;
-  lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
-  salvar();
-  renderizar();
-  document.getElementById('undo').style.display = 'none';
-}
-
 function adicionarItem() {
-  const nome = inputItem.value;
-  if (!nome) return;
-
-  const categoria = selectCategoria.value;
-  aprendizado[nome.toLowerCase()] = categoria;
-  localStorage.setItem('aprendizadoCategorias', JSON.stringify(aprendizado));
-
-  lista.push({ nome, categoria, comprado: false, preco: '', qtd: 1 });
-  inputItem.value = '';
+  const input = document.getElementById('item');
+  if (!input.value.trim()) return;
+  lista.push({ nome: input.value.trim(), comprado: false, preco: '', qtd: 1 });
+  input.value = '';
   salvar();
   renderizar();
 }
@@ -430,8 +239,10 @@ function toggle(index) {
 function setPreco(index, valor) {
   lista[index].preco = valor;
   salvar();
-  // Não renderizamos aqui para não perder o foco do input enquanto digita
-  // Mas o total só atualiza ao dar check ou adicionar novo item
+  // Atualiza o total sem re-renderizar para não perder o foco
+  let total = 0;
+  lista.forEach(i => { if(i.comprado) total += parseValor(i.preco) * (i.qtd || 1); });
+  document.getElementById('total').innerText = total.toFixed(2);
 }
 
 function setQtd(index, valor) {
@@ -440,8 +251,44 @@ function setQtd(index, valor) {
   renderizar();
 }
 
+function animarRemocao(li, index) {
+  li.style.transform = 'translateX(-100%)';
+  li.style.opacity = '0';
+  setTimeout(() => { remover(index); }, 200);
+}
+
+function remover(index) {
+  ultimoRemovido = { item: lista[index], index };
+  lista.splice(index, 1);
+  salvar();
+  renderizar();
+  const undo = document.getElementById('undo');
+  undo.style.display = 'flex';
+  setTimeout(() => { undo.style.display = 'none'; }, 5000);
+}
+
+function desfazer() {
+  if (!ultimoRemovido) return;
+  lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
+  salvar();
+  renderizar();
+  document.getElementById('undo').style.display = 'none';
+}
+
+function limparLista() {
+  if (confirm("Deseja apagar TODOS os itens da lista?")) {
+    lista = [];
+    salvar();
+    renderizar();
+  }
+}
+
+// Atalho Enter
+document.getElementById('item').addEventListener('keypress', (e) => {
+  if(e.key === 'Enter') adicionarItem();
+});
+
 renderizar();
 </script>
-
 </body>
 </html>
