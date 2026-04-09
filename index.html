@@ -23,7 +23,7 @@
       padding: 20px;
       color: var(--text);
       touch-action: pan-y;
-      padding-bottom: 120px; /* Espaço para o total fixo */
+      padding-bottom: 140px; /* Espaço para o total fixo */
     }
 
     .container { max-width: 500px; margin: auto; }
@@ -92,10 +92,11 @@
     li.comprado .nome { text-decoration: line-through; color: var(--text-light); }
 
     input[type="checkbox"] {
-      width: 22px; height: 22px; accent-color: var(--primary);
+      width: 24px; height: 24px; accent-color: var(--primary);
+      cursor: pointer;
     }
 
-    .nome { flex: 1; font-weight: 500; }
+    .nome { flex: 1; font-weight: 500; font-size: 16px; }
     
     .qtd, .preco {
       border: none; background: #f1f5f9;
@@ -103,7 +104,7 @@
       font-weight: 700; font-family: inherit;
     }
     .qtd { width: 45px; text-align: center; }
-    .preco { width: 70px; text-align: right; color: var(--primary-dark); }
+    .preco { width: 75px; text-align: right; color: var(--primary-dark); }
 
     /* FOOTER TOTAL */
     .total-card {
@@ -113,12 +114,12 @@
       text-align: center; border-top: 1px solid #e2e8f0;
       z-index: 100;
     }
-    .total-valor { font-size: 24px; font-weight: 800; color: var(--primary-dark); }
+    .total-valor { font-size: 26px; font-weight: 800; color: var(--primary-dark); }
 
     .undo {
-      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+      position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%);
       background: #1e293b; color: white; padding: 12px 20px;
-      border-radius: 50px; display: none; z-index: 200; gap: 10px;
+      border-radius: 50px; display: none; z-index: 200; gap: 10px; align-items: center;
     }
     .undo button { background: #334155; color: var(--primary); padding: 4px 10px; font-size: 12px; }
 
@@ -142,7 +143,7 @@
 </div>
 
 <div class="total-card">
-    <div style="font-size: 12px; color: var(--text-light);">TOTAL COMPRADO</div>
+    <div style="font-size: 12px; color: var(--text-light); font-weight: 600;">TOTAL COMPRADO</div>
     <div class="total-valor">R$ <span id="total">0.00</span></div>
 </div>
 
@@ -152,36 +153,34 @@
 </div>
 
 <script type="module">
-// 1. Conecta com os servidores do Google (Firebase)
+// 1. IMPORTAÇÃO FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-// 2. Configuração do seu "Baú" (Pegue esses dados no Console do Firebase)
+// 2. CONFIGURAÇÃO (SUAS CHAVES)
 const firebaseConfig = {
   apiKey: "AIzaSyBK3e1x0ZgjZEjHgrJy33jpDl30y2QUww0",
   databaseURL: "https://listacompras-70e30-default-rtdb.firebaseio.com",
   projectId: "listacompras-70e30",
 };
 
-// 3. Inicializa a conexão
+// 3. INICIALIZAÇÃO
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const listaRef = ref(db, 'minha_lista_pessoal'); // Nome da lista na nuvem
+const listaRef = ref(db, 'minha_lista_compartilhada');
 
-let lista = []; // Ela começa vazia e o Firebase preenche abaixo
+let lista = [];
 let ultimoRemovido = null;
 
-// 4. ESSA É A MÁGICA: Ouve mudanças em tempo real
-// Se a outra pessoa marcar um item, sua tela atualiza sozinha aqui
+// 4. SINCRONIZAÇÃO EM TEMPO REAL
 onValue(listaRef, (snapshot) => {
   const data = snapshot.val();
   lista = data || [];
-  renderizar(); // Atualiza a tela com os dados novos que vieram da nuvem
+  renderizar(); 
 });
 
-// 5. NOVA FUNÇÃO SALVAR: Agora envia para a internet
-function salvar() { 
-  set(listaRef, lista); 
+function salvar() {
+  set(listaRef, lista);
 }
 
 function parseValor(v) {
@@ -189,133 +188,116 @@ function parseValor(v) {
   return parseFloat(v.toString().replace(',', '.')) || 0;
 }
 
-function renderizar() {
-  const container = document.getElementById('lista');
-  container.innerHTML = '';
-
-  // Separa e ordena: primeiro não comprados (A-Z), depois comprados (A-Z)
-  const pendentes = lista.filter(i => !i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
-  const comprados = lista.filter(i => i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
-  
-  const listaOrdenada = [...pendentes, ...comprados];
-  let total = 0;
-
-  listaOrdenada.forEach(item => {
-    const indexOriginal = lista.indexOf(item);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'item-wrapper';
-
-    const fundo = document.createElement('div');
-    fundo.className = 'fundo-delete';
-    fundo.innerText = 'Excluir';
-
-    const li = document.createElement('li');
-    if(item.comprado) li.className = 'comprado';
-
-    li.innerHTML = `
-      <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${indexOriginal})">
-      <span class="nome">${item.nome}</span>
-      <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${indexOriginal}, this.value)">
-      <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${indexOriginal}, this.value)">
-    `;
-
-    // Efeito Swipe
-    let startX = 0, currentX = 0, movendo = false;
-    li.addEventListener('touchstart', e => { startX = e.touches[0].clientX; movendo = false; }, {passive: true});
-    li.addEventListener('touchmove', e => {
-      currentX = e.touches[0].clientX;
-      let diff = currentX - startX;
-      if (Math.abs(diff) > 10) movendo = true;
-      if (diff < 0) li.style.transform = `translateX(${diff}px)`;
-    }, {passive: true});
-    li.addEventListener('touchend', () => {
-      let diff = currentX - startX;
-      if (movendo && diff < -120) {
-        if (navigator.vibrate) navigator.vibrate(50);
-        animarRemocao(li, indexOriginal);
-      } else { li.style.transform = 'translateX(0)'; }
-    });
-
-    if (item.comprado && item.preco) {
-      total += parseValor(item.preco) * (item.qtd || 1);
-    }
-
-    wrapper.appendChild(fundo);
-    wrapper.appendChild(li);
-    container.appendChild(wrapper);
-  });
-
-  document.getElementById('total').innerText = total.toFixed(2);
-}
-
-function adicionarItem() {
+// 5. FUNÇÕES GLOBAIS (window.) para funcionar com onclick do HTML
+window.adicionarItem = () => {
   const input = document.getElementById('item');
   if (!input.value.trim()) return;
   lista.push({ nome: input.value.trim(), comprado: false, preco: '', qtd: 1 });
   input.value = '';
   salvar();
-  renderizar();
-}
+};
 
-function toggle(index) {
+window.toggle = (index) => {
   lista[index].comprado = !lista[index].comprado;
   salvar();
-  renderizar();
-}
+};
 
-function setPreco(index, valor) {
+window.setPreco = (index, valor) => {
   lista[index].preco = valor;
   salvar();
-  // Atualiza o total sem re-renderizar para não perder o foco
+  atualizarTotalSomente();
+};
+
+window.setQtd = (index, valor) => {
+  lista[index].qtd = parseInt(valor) || 1;
+  salvar();
+};
+
+window.limparLista = () => {
+  if (confirm("Deseja apagar TODOS os itens da lista?")) {
+    lista = [];
+    salvar();
+  }
+};
+
+window.desfazer = () => {
+  if (!ultimoRemovido) return;
+  lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
+  salvar();
+  document.getElementById('undo').style.display = 'none';
+};
+
+window.removerItem = (index) => {
+  ultimoRemovido = { item: lista[index], index };
+  lista.splice(index, 1);
+  salvar();
+  const undo = document.getElementById('undo');
+  undo.style.display = 'flex';
+  setTimeout(() => { undo.style.display = 'none'; }, 5000);
+};
+
+// 6. RENDERIZAÇÃO DA TELA
+function renderizar() {
+  const container = document.getElementById('lista');
+  container.innerHTML = '';
+
+  const pendentes = lista.filter(i => !i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
+  const comprados = lista.filter(i => i.comprado).sort((a,b) => a.nome.localeCompare(b.nome));
+  const listaOrdenada = [...pendentes, ...comprados];
+
+  listaOrdenada.forEach(item => {
+    const idx = lista.indexOf(item);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'item-wrapper';
+
+    wrapper.innerHTML = `
+      <div class="fundo-delete">Excluir</div>
+      <li class="${item.comprado ? 'comprado' : ''}">
+        <input type="checkbox" ${item.comprado ? 'checked' : ''} onchange="toggle(${idx})">
+        <span class="nome">${item.nome}</span>
+        <input type="number" value="${item.qtd || 1}" class="qtd" onchange="setQtd(${idx}, this.value)">
+        <input type="text" placeholder="R$" value="${item.preco || ''}" class="preco" oninput="setPreco(${idx}, this.value)">
+      </li>
+    `;
+
+    const li = wrapper.querySelector('li');
+    configurarSwipe(li, idx);
+    container.appendChild(wrapper);
+  });
+
+  atualizarTotalSomente();
+}
+
+function configurarSwipe(li, index) {
+  let startX = 0, currentX = 0, movendo = false;
+  li.addEventListener('touchstart', e => { startX = e.touches[0].clientX; movendo = false; }, {passive: true});
+  li.addEventListener('touchmove', e => {
+    currentX = e.touches[0].clientX;
+    let diff = currentX - startX;
+    if (Math.abs(diff) > 10) movendo = true;
+    if (diff < 0) li.style.transform = `translateX(${diff}px)`;
+  }, {passive: true});
+  li.addEventListener('touchend', () => {
+    let diff = currentX - startX;
+    if (movendo && diff < -120) {
+      li.style.transform = 'translateX(-100%)';
+      li.style.opacity = '0';
+      setTimeout(() => window.removerItem(index), 200);
+    } else { li.style.transform = 'translateX(0)'; }
+  });
+}
+
+function atualizarTotalSomente() {
   let total = 0;
   lista.forEach(i => { if(i.comprado) total += parseValor(i.preco) * (i.qtd || 1); });
   document.getElementById('total').innerText = total.toFixed(2);
 }
 
-function setQtd(index, valor) {
-  lista[index].qtd = parseInt(valor) || 1;
-  salvar();
-  renderizar();
-}
-
-function animarRemocao(li, index) {
-  li.style.transform = 'translateX(-100%)';
-  li.style.opacity = '0';
-  setTimeout(() => { remover(index); }, 200);
-}
-
-function remover(index) {
-  ultimoRemovido = { item: lista[index], index };
-  lista.splice(index, 1);
-  salvar();
-  renderizar();
-  const undo = document.getElementById('undo');
-  undo.style.display = 'flex';
-  setTimeout(() => { undo.style.display = 'none'; }, 5000);
-}
-
-function desfazer() {
-  if (!ultimoRemovido) return;
-  lista.splice(ultimoRemovido.index, 0, ultimoRemovido.item);
-  salvar();
-  renderizar();
-  document.getElementById('undo').style.display = 'none';
-}
-
-function limparLista() {
-  if (confirm("Deseja apagar TODOS os itens da lista?")) {
-    lista = [];
-    salvar();
-    renderizar();
-  }
-}
-
 // Atalho Enter
 document.getElementById('item').addEventListener('keypress', (e) => {
-  if(e.key === 'Enter') adicionarItem();
+  if(e.key === 'Enter') window.adicionarItem();
 });
 
-renderizar();
 </script>
 </body>
 </html>
