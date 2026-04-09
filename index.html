@@ -70,23 +70,47 @@
     .nome { flex: 1; font-weight: 500; font-size: 15px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
     /* BOXES IGUAIS */
+    /* BOXES IGUAIS E CENTRALIZADOS */
     .qtd-box, .preco-box {
-      display: flex; align-items: center; justify-content: center;
-      background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;
-      width: 80px; height: 40px; box-sizing: border-box; flex-shrink: 0;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; /* Centraliza o conteúdo horizontalmente */
+      background: #f8fafc; 
+      border-radius: 10px; 
+      border: 1px solid #e2e8f0;
+      width: 80px; /* Largura idêntica para os dois */
+      height: 40px; 
+      box-sizing: border-box; 
+      flex-shrink: 0;
     }
 
-    .cifrao { font-size: 10px; font-weight: 800; color: var(--primary); margin-right: 2px; }
-
+    /* CENTRALIZA OS DADOS DENTRO DOS BOXES */
     .input-lista {
-      border: none !important; background: transparent !important; 
-      width: 100% !important; font-weight: 700; font-family: inherit; 
-      color: var(--text); outline: none; text-align: center; font-size: 14px;
+      border: none !important; 
+      background: transparent !important; 
+      width: 100% !important; 
+      font-weight: 700; 
+      font-family: inherit; 
+      color: var(--text); 
+      outline: none; 
+      text-align: center; /* Centraliza o número (Quantidade) */
+      font-size: 14px;
       padding: 0 !important;
     }
     
-    .input-lista.preco-input { color: var(--primary-dark); text-align: left; }
+    .preco-input { 
+      color: var(--primary-dark) !important; 
+      text-align: center; /* Centraliza o valor (Preço) */
+      flex: 1;
+    }
 
+    .cifrao { 
+      font-size: 10px; 
+      font-weight: 800; 
+      color: var(--primary); 
+      margin-left: 4px; /* Espaço sutil da borda esquerda */
+      margin-right: -2px; /* Aproxima o R$ do número */
+    }
     /* FOOTER */
     .total-card { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
     .btn-limpar { background: none; border: none; color: var(--danger); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; opacity: 0.8; }
