@@ -28,24 +28,30 @@
   }
 
   /* GRADIENTE DE FUNDO ANIMADO (OPCIONAL, MAS LINDO) */
-  body::before {
-    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
-    z-index: -1;
-  }
+/* O fundo deve ficar no fundo de tudo */
+body::before {
+  content: ''; 
+  position: fixed; 
+  top: 0; left: 0; 
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+  z-index: -1; /* Garante que fique atrás */
+}
 
-  .container { max-width: 500px; margin: auto; }
+/* A tela de login precisa de prioridade máxima */
+.login-overlay {
+  z-index: 5000; 
+  position: fixed;
+  /* ... restante igual ... */
+}
 
-  h2 { text-align: center; font-weight: 700; margin-bottom: 20px; color: var(--text); }
-
-  /* ESTILO MODERNO DO LOGIN (GLASSMORPHISM) */
-  .login-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Fundo escuro suave */
-    backdrop-filter: blur(10px); /* O pulo do gato: desfoque */
-    z-index: 5000; display: flex; align-items: center; justify-content: center;
-    animation: fadeIn 0.5s ease;
-  }
+/* O conteúdo do app precisa aparecer */
+.container {
+  position: relative; /* Adicione isso */
+  z-index: 10;       /* Adicione isso */
+  max-width: 500px; 
+  margin: auto; 
+}
   
   .login-box {
     background: var(--card);
@@ -132,6 +138,41 @@
   /* ANIMAÇÕES */
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+    /* Estilo do aviso de 'Adicionado' */
+#toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 41, 59, 0.9);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  display: none; /* Começa escondido */
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+/* Estilo do aviso de 'Desfazer' */
+.undo {
+  position: fixed;
+  bottom: 110px; /* Fica acima do total */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  display: none; /* Começa escondido */
+  z-index: 9999;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+}
+    
 </style>
 </head>
 <body>
@@ -243,11 +284,17 @@ function parseValor(v) {
 
 // 5. FUNÇÕES GLOBAIS (window.) para funcionar com onclick do HTML
 window.adicionarItem = () => {
-  const input = document.getElementById('item');
-  if (!input.value.trim()) return;
-  lista.push({ nome: input.value.trim(), comprado: false, preco: '', qtd: 1 });
-  input.value = '';
-  salvar();
+    const input = document.getElementById('item');
+    if (!input.value.trim()) return;
+
+    lista.push({ nome: input.value.trim(), comprado: false, preco: '', qtd: 1 });
+    input.value = '';
+    salvar();
+
+    // --- FAZ O TOAST APARECER ---
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2000); // Some após 2 segundos
 };
 
 window.toggle = (index) => {
